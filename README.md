@@ -20,7 +20,7 @@ from Lyon (France), (45.743534, 4.784968)
 
 
 
-
+## Embargo end on 1st January 2021
 Please check the PDF version of the manuscript [here](http://amsdottorato.unibo.it/9197/) and cite the Thesis within you work using
 
 Antoniazzi, F. (2020). _Semantics Driven Agent Programming_ (Doctoral dissertation, Alma Mater Studiorum Università di Bologna).
