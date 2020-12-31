@@ -1,0 +1,79 @@
+\begin{tikzpicture}[
+    node distance=2cm,
+    every node/.style={fill=white, font=\fontsize{8pt}{8}\selectfont}, 
+    align=center, 
+    base/.style = {
+        rectangle, rounded corners, draw=black,
+        minimum width=1cm, minimum height=0.5cm,
+        text centered, font=\fontsize{8pt}{8}\selectfont},
+    ]
+        
+
+  % Specification of nodes (position, etc.)
+\node (one)   [base, visible on=<1->]  {
+\begin{tabular}{cc}
+\multirow{2}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ connects \\ & to \faWifi
+\end{tabular}};
+
+\node (two)     [base, right of=one, node distance=4cm, visible on=<2->] {
+\begin{tabular}{cc}
+\multirow{2}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ updates its \\ & TD to SEPA
+\end{tabular}};
+
+\node (three) [base, right of=two, node distance=4cm, visible on=<3->]   {\begin{tabular}{cc}
+\multirow{3}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ subscribes for \\ & other Things it \\ & can contact
+\end{tabular}};
+
+\node (wait) [right of=three, node distance=0cm, yshift=-1cm, visible on=<3->]{wait...};
+
+\node (four) [base, right of=two, node distance=3.4cm, yshift=-2.1cm, visible on=<4->]   {\begin{tabular}{cc}
+\multirow{3}{*}{\includegraphics[scale=.035]{arduino.jpeg}} & appears and updates \\ & its TD to SEPA. It \\ & fulfils R$\pi$ requests
+\end{tabular}};
+
+\node (five) [base, right of=two, node distance=.7cm, yshift=-1cm, visible on=<5->]   {\begin{tabular}{cc}
+\multirow{2}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ is notified \\ & about Arduino
+\end{tabular}};
+
+\node (six) [base, right of=one, node distance=.5cm, yshift=-1.8cm, visible on=<6->]   {\begin{tabular}{cc}
+\multirow{3}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ checks the envi-
+ \\ & ronment: is it necessary\\ & to trigger actuation?
+\end{tabular}};
+
+\node (seven) [base, right of=six, node distance=-1.5cm, yshift=-1.3cm, visible on=<7->]   {wait...};
+
+\node (eight) [base, right of=two, node distance=-1cm, yshift=-3cm, visible on=<8->]   {\begin{tabular}{cc}
+\multirow{2}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ updates a new\\ & request for Arduino
+\end{tabular}};
+
+\node (nine) [base, right of=eight, node distance=4.4cm,yshift=-1cm, visible on=<9->]   {\begin{tabular}{cc}
+\multirow{3}{*}{\includegraphics[scale=.05]{rpi.png}} & An output is expected. 
+ \\ & R$\pi$ subscribes \\ & to Arduino output
+\end{tabular}};
+
+\node (ten) [base, right of=nine, node distance=0cm, yshift=-1.7cm, visible on=<10->]   {\begin{tabular}{cc}
+\multirow{3}{*}{\includegraphics[scale=.035]{arduino.jpeg}} & Arduino is notified \\ & of a new \\ & actuation request
+\end{tabular}};
+
+\node (eleven) [base, left of=ten, node distance=4.5cm, visible on=<11->]   {\begin{tabular}{cc}
+\multirow{3}{*}{\includegraphics[scale=.035]{arduino.jpeg}} & Arduino performs \\ & its tasks and\\ & Updates its output
+\end{tabular}};
+
+\node (twelve) [base, left of=eleven, node distance=0cm, yshift=1.4cm, visible on=<12->]   {\begin{tabular}{cc}
+\multirow{2}{*}{\includegraphics[scale=.05]{rpi.png}} & R$\pi$ is notified \\ & about the output
+\end{tabular}};
+  
+  % Specification of lines between nodes specified above
+  % with aditional nodes for description 
+  \draw[->, visible on=<2->] (one) -- (two);
+  \draw[->, visible on=<3->]     (two) -- (three);
+  \draw[->, visible on=<3->]  (three) -- (wait) -| (four);
+  \draw[->, visible on=<5->]      (four) -| (five);
+  \draw[->, visible on=<6->]     (five) -| (six);
+  \draw[<->, visible on=<7->]      (six) |- node{no} (seven);
+  \draw[->, visible on=<8->]      (six) -| node[anchor=west, yshift=-.4cm]{yes} (eight);
+  \draw[->, visible on=<9->]    (eight) -| (nine);
+  \draw[->, visible on=<10->]       (nine) -- (ten);
+  \draw[->, visible on=<11->]    (ten) -- (eleven);
+  \draw[->, visible on=<12->]      (eleven) -- (twelve);
+  \draw[->, visible on=<13->]    (twelve) -| node{\texttt{while (1)}\\ loop restart} (seven);
+  \end{tikzpicture}

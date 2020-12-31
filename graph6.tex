@@ -1,0 +1,85 @@
+\begin{tikzpicture}[->,>=stealth']
+  
+ % State: ACK with different content
+ \node[state, anchor=center, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (DATASCHEMA) {%
+    \begin{tabular}{l} 
+        \parbox{2.1cm}{\texttt{swot:DataSchema}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, yshift=-5cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (DATA) {%
+    \begin{tabular}{l} 
+        \parbox{1.2cm}{\texttt{swot:Data}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=DATA, node distance=6cm, draw=green!90,fill=green!90,align=center,visible on=<2->] (SUBMARINE) {%
+    \begin{tabular}{l} 
+        \parbox{2.9cm}{\texttt{\textit{we all live in a yellow submarine...}}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=DATASCHEMA, draw=yellow!90,fill=yellow!90,align=center,node distance=6cm,visible on=<1->] (FIELDSCHEMA) {%
+    \begin{tabular}{l} 
+        \parbox{2.2cm}{\texttt{swot:FieldSchema}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=FIELDSCHEMA, draw=green!90,fill=green!90,align=center,node distance=3.5cm,visible on=<2->] (STRING) {%
+    \begin{tabular}{l} 
+        \parbox{1.4cm}{\texttt{xsd:string}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=DATASCHEMA, draw=yellow!90,fill=yellow!90,align=center,node distance=2.5cm,yshift=-1cm,visible on=<1->] (ONTOLOGYURI) {%
+    \begin{tabular}{l} 
+        \parbox{2.2cm}{\texttt{swot:OntologyURI}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=DATASCHEMA, draw=yellow!90,fill=yellow!90,align=center,node distance=2.5cm,yshift=-2cm,visible on=<1->] (RESOURCEURI) {%
+    \begin{tabular}{l} 
+        \parbox{2.2cm}{\texttt{swot:ResourceURI}}
+    \end{tabular}
+};
+
+\node[state,right of=ONTOLOGYURI, node distance=6cm, yshift=-.5cm, align=center,visible on=<2->] (MSFS) {
+\begin{tabular}{l}
+  \parbox{2.9cm}{\texttt{\_:MyStringFieldSchema}}
+   \end{tabular}
+};
+
+\node[state, right of=DATASCHEMA, yshift=-3.3cm, node distance=2cm, anchor=center, draw=purple!90,fill=purple!90,align=center,text=white,visible on=<2->] (MYDS) {%
+    \begin{tabular}{l} 
+        \parbox{2.1cm}{\texttt{ns:MyDataSchema}}
+    \end{tabular}
+};
+
+\node[state, right of=MYDS, node distance=6.5cm, anchor=center, draw=purple!90,fill=purple!90,align=center,text=white,visible on=<2->] (BEATLES) {%
+    \begin{tabular}{l} 
+        \parbox{3.2cm}{\texttt{beatles:yellowsubmarine}}
+    \end{tabular}
+};
+
+\node[state,draw=none,right of=DATA,node distance=6.5cm, yshift=-1cm,align=center] (LEGEND) {
+\begin{tabular}{l}
+  \parbox{10cm}{
+  \textbf{\tiny{\textcolor{yellow!90}{Classes} \hspace{.5cm}\textcolor{purple!90}{Individuals}\hspace{.5cm}\textcolor{blue}{Object Properties}\hspace{.5cm}\textcolor{green!90}{Literals}\\\textcolor{green}{ Data Properties}\hspace{.5cm}\textcolor{red}{\texttt{rdf:type}}\hspace{.5cm}\framebox{Blank Nodes}}}}
+  \end{tabular}
+};
+ 
+ 
+\path (DATASCHEMA)     edge[draw=blue,visible on=<1->]  node[anchor=south]{\textcolor{blue}{\texttt{swot:hasFieldSchema}}}   (FIELDSCHEMA)
+(ONTOLOGYURI)     edge[draw=blue, bend right=20,visible on=<1->]  node[anchor=south]{\textcolor{blue}{\texttt{rdfs:subClassOf}}}   (FIELDSCHEMA)
+(RESOURCEURI)   edge[draw=blue,bend right=20,visible on=<1->] node[]{}                (FIELDSCHEMA)  
+(MSFS)   edge[draw=red,bend right=10,visible on=<2->] node[anchor=south, above]{\textcolor{red}{\texttt{a}}}  (FIELDSCHEMA)  
+(MSFS)   edge[draw=red,bend right=10,visible on=<2->] node[anchor=north]{\textcolor{red}{\texttt{a}}}  (STRING)
+(MYDS)     edge[draw=red, bend left=20,visible on=<2->] node[anchor=north]{\textcolor{red}{\texttt{a}}} (DATASCHEMA)
+(MYDS)   edge[draw=blue,visible on=<2->] node[text width=2cm,anchor=south]{\textcolor{blue}{\texttt{swot:hasFieldSchema}}}     (MSFS)
+(BEATLES)   edge[draw=blue,visible on=<2->] node[anchor=south]{\textcolor{blue}{\texttt{swot:hasDataSchema}}}       (MYDS)
+(DATA)   edge[draw=blue, anchor=north,visible on=<1->] node[text width=2cm,yshift=-1.8cm]{\textcolor{blue}{\texttt{swot:hasDataSchema}}}                                (DATASCHEMA)
+(BEATLES)   edge[draw=green,visible on=<2->] node[anchor=north, above]{\textcolor{green}{\texttt{swot:hasValue}}}  (SUBMARINE)
+(BEATLES)   edge[draw=red,visible on=<2->] node[anchor=south]{\textcolor{red}{\texttt{a}}}  (DATA)
+;   
+
+\end{tikzpicture}

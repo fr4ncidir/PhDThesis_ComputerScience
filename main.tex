@@ -1,0 +1,383 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usefonttheme{structurebold}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\usepackage{lmodern}
+\usepackage{fontawesome}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+\usetikzlibrary{matrix,positioning,tikzmark}
+\usepackage{pict2e}
+\usepackage{multirow}
+
+\tikzset{
+    font={\fontsize{8pt}{8}\selectfont},
+    state/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           minimum height=1.3em,
+           inner sep=2pt,
+           text centered,
+           },
+    invisible/.style={opacity=0},
+    visible on/.style={alt={#1{}{invisible}}}, alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+    },
+}
+
+%\useoutertheme[footline=authortitle]{miniframes}
+
+\title{Semantics Driven Agent Programming}
+\author[Francesco Antoniazzi]{\textit{Candidato}: Ing. Francesco Antoniazzi \\
+\textit{Relatore}: Prof. Tullio Salmon Cinotti \\
+\textit{Coordinatore Dottorato}: Prof. Davide Sangiorgi}
+\centering
+\date{Lyon - Bologna, 2 Aprile 2020\\\vspace{5mm} \footnotesize{\texttt{francesco.antoniazzi}\faAt \texttt{unibo.it}}}
+\institute{Dottorato in Computer Science and Engineering - XXXII ciclo \\ Alma Mater Studiorum Università di Bologna}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor%~~\beamer@ifempty{\insertshortinstitute}{}{(\insertshortinstitute)}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.555555\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.111111\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+%    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}
+}%
+  \vskip0pt%
+}
+\makeatother
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Internet of Things}
+\subsection{Breaking Fragmentation}
+\begin{frame}{State of the Art}
+\begin{itemize}
+    \item Providing internet connectivity to all sort of devices: everyday items, machines, clothing, buildings, ...,  in order to collect information on entities and environments. And realize applications;
+    \item Interoperability issues: vertical silos;
+    \item Breaking fragmentation means creating a bridge at some level of ISO-OSI stack;
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Breaking fragmentation}
+\includegraphics[width=.8\textwidth]{OSILayers.png}
+\end{frame}
+
+\begin{frame}{Breaking fragmentation}
+\begin{flushleft}
+Let us just consider Application layer protocols, like MQTT and AMQP. 
+
+The \textit{topic} communication implies that there is an agreement on the semantics among application:
+\begin{enumerate}
+    \item<1-> The topic URI is interpreted in the same way; \\
+    \textit{this is the place in which temperature information should be stored}
+    \item<2-> The exchanged information has the same format; \\
+    \textit{information should be provided as a JSON file compliant with a specific JSONSchema}
+    \item<3-> The exchanged information has the same semantics; \\
+    \textit{no misunderstanding is possible on the meaning of the received value: }\textcolor{blue}{\texttt{mouse}} \textit{means `~\includegraphics[scale=.015]{mouse}' for all participants, and is never intended as `~\faMousePointer'}
+\end{enumerate}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}{Breaking fragmentation}
+But how do we agree on all this, if applications are developed 
+in different places, different times, by different people, with different purposes?
+
+\includegraphics[scale=.05]{rdf.png}
+
+The Resource Description Framework (RDF) can enrich with semantics all the Application and Information level of the IoT.
+\end{frame}
+
+\section{Semantic Internet of Things}
+\begin{frame}{What's a \textit{Thing}?}
+\begin{block}{IEEE definition}
+\textit{The Thing is any physical object \textbf{relevant} from a user or application perspective.}
+\end{block} \pause
+\begin{block}{W3C definition}
+\textit{Things can be \textbf{virtual representations} of physical or abstract entities. They can be connected or not connected. Each thing can have one or more virtual representations. Things can have histories, and have identities, rich \textbf{descriptions}, services, access control and data handling policies. They have URIs.}
+\end{block}
+\vfill
+\footnotesize{Ref. \cite{liu2016comparison}}
+\end{frame}
+
+\subsection{IEEE approach}
+\begin{frame}{Internet of Musical Things (IoMusT) Ontology}
+\framesubtitle{IEEE approach}
+\begin{flushleft}
+The Internet of Musical Things is the ensemble of interfaces, protocols and representations of music-related information that enable services and applications serving a musical purpose based on interactions between humans and Musical Things or between Musical Things themselves, in physical and/or digital realms.\\
+\vspace{1mm}
+Music-related information refers to data sensed and processed by a Musical Thing, and/or exchanged with a human or with another Musical Thing \cite{turchet2018IoMusT}.
+\end{flushleft}
+\end{frame}
+
+\subsection{IoMusT Ontology}
+\begin{frame}{Internet of Musical Things (IoMusT) Ontology}
+\framesubtitle{IEEE approach}
+\includegraphics[scale=.5]{onto_schema.png}
+\begin{itemize}
+    \item Is IoMusT a subcase of IoT? 
+    \item It presents an approach, a model to realize a semantic and fully interoperable IoT connecting different fields incrementally;
+    \item Topic completely unexplored in literature: music+IoT+semantics \cite{turchet2020internet};
+\end{itemize}
+\end{frame}
+
+\begin{frame}{IoMusT Ontology}
+\begin{scriptsize}
+\begin{table}
+    \begin{tabular}{r|c|c|c|c|c|c|c|c|c|}
+     & \rotatebox{90}{\texttt{ns:Bob}} & \rotatebox{90}{\texttt{ns:Wardrobe}} & \rotatebox{90}{\texttt{ns:SmartCar}} & \rotatebox{90}{\texttt{ns:Violin}} & \rotatebox{90}{\texttt{ns:SmartViolin}} & \rotatebox{90}{\texttt{ns:TShirt}} & \rotatebox{90}{\texttt{ns:StageLight}} & \rotatebox{90}{\texttt{ns:VR\_HeadSet}} &
+     \rotatebox{90}{\begin{tabular}{@{}c@{}}\texttt{ns:HeartBeatSensor} \\ for music experiment \end{tabular}} \\
+     \hline
+    \texttt{foaf:Person} & \faCheck  &  &  &  &  &  &  &  &\\ \hline
+    \texttt{iot:Thing} &  &  \faCheck &  \faCheck & \faCheck  & \faCheck & \faCheck  & \faCheck  & \faCheck & \faCheck \\ \hline
+    \texttt{iot:SmartThing} &  &  &  \faCheck &  &  \faCheck &  & \faCheck & \faCheck & \\ \hline
+    \texttt{iot:ConnectedThing} &  &  &  &  &  \faCheck &  & \faCheck & \faCheck & \faCheck \\ \hline
+    \texttt{iot:WearableThing} &  &  &  &  & & \faCheck &  &  \faCheck & \faCheck \\ \hline
+    \texttt{mo:Instrument} &  &   &  & \faCheck &  \faCheck &  &  &  & \\ \hline
+    \texttt{iomust:MusicalThing} &  &   &  & \faCheck  &  \faCheck &  &  \faCheck &  & \faCheck \\ \hline
+    \texttt{iomust:SmartMusicalThing} & &  &   &  &  \faCheck &  & \faCheck  &  & \\ \hline
+    \texttt{iomust:SmartInstrument} &  &  &  &  &  \faCheck &  &  &  & \\ \hline
+    \texttt{iomust:StageEquipment} item &  &  &  &  &  &  & \faCheck &  &  \\ \hline
+    \texttt{iomust:WearableMusicalThing} &  &  &  &  &  &  &  &  & \faCheck\\ \hline
+    \end{tabular}
+\end{table}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}{IoMusT Ontology}
+\begin{footnotesize}
+\begin{block}{Rule Example 1 (not reversible!)}
+\begin{multline*}
+\texttt{?s a iot:Thing, mo:Instrument} 
+\Rightarrow
+\texttt{?s a iomust:MusicalThing}
+\end{multline*}
+Where the Musical Thing is \textit{a thing used to produce or enjoy music, with reference to its context}.
+
+\end{block}\pause
+\begin{block}{Rule Example 2}
+\begin{multline*}
+\texttt{?e co:elementOf ?s; a iomust:MusicalThing. ?s a co:collection } \\
+\Leftrightarrow
+\texttt{?s a iomust:StageEquipment}
+\end{multline*}
+
+\end{block} 
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}{IoMusT Ontology example I}
+\begin{flushleft}
+How do we describe a Smart Guitar with:
+\begin{enumerate}
+    \item An IMU sensor unit;
+    \item A contact microphone;
+    \item A loudspeaker;
+\end{enumerate}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}{IoMusT Ontology example I}
+\input{graph1}
+\end{frame}
+
+\begin{frame}{IoMusT Ontology example II}
+\begin{flushleft}
+How do we describe an IoMusT application:
+\begin{enumerate}
+    \item A music performance made by someone;
+    \item Using a Smart guitar belonging to someone;
+    \item Starting at a specific time;
+    \item Having a specific duration;
+\end{enumerate}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}{IoMusT Ontology example II}
+\input{graph2}
+\end{frame}
+
+\begin{frame}
+\includegraphics[width=\textwidth]{iomust_screenshot.png}
+\texttt{https://fr4ncidir.github.io/IoMusT/}
+\end{frame}
+
+\begin{frame}{Going further?}
+\framesubtitle{Semantic Web of Things}
+\includegraphics[width=\textwidth]{closerlook.png}
+\normalsize
+Any issues? \\ \pause
+Once we setup the information (e.g. \textit{interval} and \textit{duration}), how do we keep up with evolving environments? What if a Smart Violin joins the performance?
+\end{frame}
+
+\subsection{Prerequisites: SEPA Architecture}
+\begin{frame}{SPARQL Event Processing Architecture}
+\framesubtitle{Prerequisite}
+\includegraphics[width=.85\textwidth]{sepa_internal_architecture.png}
+\footnotesize{Ref. \cite{roffia2018dynamic}}
+\normalsize
+\end{frame}
+\begin{frame}{Interacting through SEPA}
+\begin{block}{SEPA Query}
+\textbf{Client:} \texttt{HTTP GET} with SPARQL 1.1 Query payload;\\
+\textbf{SEPA engine:} returns JSON content with SPARQL variable bindings;
+\end{block} \pause
+
+\begin{block}{SEPA Update}
+\textbf{Client:} \texttt{HTTP POST} with SPARQL 1.1 Update payload;\\
+\textbf{SEPA engine:} returns update `success' or `failure';
+\end{block} \pause
+
+\begin{block}{SEPA Subscription}
+\textbf{Client:} requests \texttt{WebSocket} opening, transmits SPARQL 1.1 Query;
+\textbf{SEPA engine:} activates the subscription and transmits the first notification as JSON contents with query variable bindings. \\
+From then on, JSON contents with \texttt{added} and \texttt{removed} bindings;
+\end{block}
+\end{frame}
+\begin{frame}
+\input{graph3}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{AudioCommons project}
+\framesubtitle{SEPA usage example}
+\includegraphics[width=\textwidth]{audiocommons_schema.png}
+\includegraphics[width=\textwidth]{audiocommons_schema_sepa.png}
+Ref. \cite{ceriani2018audio, xambo2018jam, lefranccois2017sparql}
+\end{frame}
+
+\subsection{W3C approach: Web of Things}
+\begin{frame}[allowframebreaks]{Web of Things}
+\framesubtitle{Prerequisite}
+\begin{flushleft}
+The Web of Things was introduced approximately in 2010 \cite{guinard2010resource}. The fragmentation of IoT was addressed considering that
+\begin{itemize}
+    \item the hardware available today is cheap and powerful;
+    \item the World Wide Web stack, including HTTP protocol and JSON format for data exchange are broadly used;
+    \item the RESTful design can be applied also to IoT systems and giving a broader meaning to the term `resource'
+\end{itemize}
+
+\framebreak
+As discussed, the W3C provided its own definition of Thing, highlighting the fact that \textbf{they have URIs}.
+
+\vspace{3mm}
+The W3C WoT Working Group was created in this context to develop an interaction model and a common vocabulary to identify the Thing capabilities in the environment.
+
+\vspace{3mm}
+This Thesis work takes inspiration from the W3C drafts, and combines it with the aforementioned SEPA architecture \cite{antoniazzi2019building}.
+\end{flushleft}
+\end{frame}
+
+\subsection{SWoT Ontology}
+\begin{frame}{Comparison: W3C WoT vs SWoT ontology tools}
+\small
+\begin{tabular}{|p{.45\textwidth}|p{.45\textwidth}|}
+\multicolumn{1}{c}{\textbf{W3C WoT}} & \multicolumn{1}{c}{\textbf{SWoT (this work)}} \\ \hline \hline
+Devices have their \textbf{Thing Descriptions} (TD). They provide it as small web servers, in JSON-LD; & Devices post their TDs as a graph into SEPA; \\ \hline 
+Clients still have to discover the devices by their own means, or discovery repos have to be implemented; & SEPA provides natively semantic discovery over the RDF graph of TDs; \\ \hline
+Direct interaction after interpreting the TD; & SEPA-mediated interaction according to the  SWOT dynamic ontology \\ \hline
+Reduced data model; & Extended data model and protocol; \\ \hline
+No shared context, since TDs are separate universed; & SEPA may contain a shared context subgraph, depending on applications;\\ \hline \hline
+\end{tabular}
+\normalsize
+\end{frame}
+
+\begin{frame}{SWOT (static) Ontology}
+\input{graph4}
+\end{frame}
+\begin{frame}{SWOT (static) Ontology}
+\input{graph5}
+\end{frame}
+\begin{frame}{SWOT (static) Ontology}
+\input{graph6}
+\end{frame}
+
+\begin{frame}{SWOT (dynamic) Ontology}
+\framesubtitle{Triggering an Action Request}
+\input{graph7}
+\end{frame}
+\begin{frame}{SWOT (dynamic) Ontology}
+\framesubtitle{Triggering an Event Notification}
+\input{graph8}
+\end{frame}
+\begin{frame}
+\includegraphics[width=\textwidth]{swot_screenshot.png}
+\texttt{https://fr4ncidir.github.io/SemanticWoT/}
+\end{frame}
+
+\section{Programming the SWoT}
+\subsection{Cocktail Framework}
+\begin{frame}{Cocktail Framework}
+A Python3 framework was developed to fully exploit the SWOT ontology presented, based on a SEPA engine:
+\begin{enumerate}
+    \item<1-> semantic TD definition and posting;
+    \item<2-> event subscription and notification;
+    \item<3-> action request and execution;
+    \item<4-> full semantic discovery;
+\end{enumerate}
+All this by using SEPA's engine with SPARQL 1.1 Queries, Updates and Discoveries.
+\end{frame}
+
+\subsection{Typical Workflow}
+\begin{frame}{SWoT Application Workflow}
+\framesubtitle{Basic example with two devices}
+\input{workflow}
+\end{frame}
+
+\section{Future Research...}
+\begin{frame}{Future Research...}
+\begin{itemize}
+    \item<1-> From the Internet of Musical Things to the (Semantic) Web of Musical Things; \\ \textit{\footnotesize{In collaboration with Università di Trento}}
+    \item<2-> enhance SPARQL-Generate; \\
+    \textit{\footnotesize{PostDoc at \'{E}cole des Mines de St-\'{E}tienne}}
+    \item<3-> Apply the workflow previously presented to create Industry 4.0 environments;
+    \textit{\footnotesize{\'{E}cole des Mines de St-\'{E}tienne}: IT'M Factory}
+    \item<4-> Study additional coordination mechanisms on these environments;
+    \textit{\footnotesize{\'{E}cole des Mines de St-\'{E}tienne}: Plateforme Territoire}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}%[allowframebreaks]
+\begin{tiny}
+\frametitle{References}
+\bibliographystyle{ieeetr}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+\bibliography{biblio.bib}
+\end{tiny}
+\end{frame}
+
+\begin{frame}
+\begin{tikzpicture}
+\draw (0, 0) node[inner sep=0] {\includegraphics[width=\textwidth]{questions.jpg}};
+\draw (1, -2) node {\textbf{\textit{\Huge{\textcolor{white}{Questions?}}}}};
+\end{tikzpicture}
+\end{frame}
+
+\end{document}

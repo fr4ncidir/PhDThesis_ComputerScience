@@ -1,0 +1,102 @@
+\begin{tikzpicture}[->,>=stealth']
+  
+ % State: ACK with different content
+ \node[state, anchor=center, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (THINGDESCRIPTION) {%
+    \begin{tabular}{l} 
+        \parbox{3cm}{\texttt{swot:ThingDescription}}
+    \end{tabular}
+};
+
+ % State: ACK with different content
+ \node[state,  yshift=-1cm, node distance=4cm, anchor=center, right of=THINGDESCRIPTION, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (INTERACTIONPATTERN) {%
+    \begin{tabular}{l} 
+        \parbox{3.2cm}{\texttt{swot:InteractionPattern}}
+    \end{tabular}
+};
+  
+ % State: ACK with different content
+ \node[state,  yshift=-2cm, node distance=-1cm, anchor=center, right of=THINGDESCRIPTION, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (ACTION) {%
+    \begin{tabular}{l} 
+        \parbox{1.5cm}{\texttt{swot:Action}}
+    \end{tabular}
+};
+
+   % State: ACK with different content
+\node[state, yshift=-.5cm, anchor=center, right of=ACTION, node distance=5cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (PROPERTY) {%
+    \begin{tabular}{l}
+        \parbox{1.8cm}{\texttt{swot:Property}}
+    \end{tabular}
+};
+  
+\node[state, right of=ACTION, node distance=10cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (EVENT) {%
+    \begin{tabular}{l} 
+        \parbox{1.4cm}{\texttt{swot:Event}}
+    \end{tabular}
+};
+
+\node[state, anchor=center, 
+right of=ACTION, 
+draw=yellow!90,fill=yellow!90, yshift=-1.5cm,
+align=center, node distance=2cm,visible on=<3->] (DATA) {%
+    \begin{tabular}{l}
+        \parbox{1.2cm}{\texttt{swot:Data}}
+    \end{tabular}
+};
+
+ \node[state, right of=ACTION, node distance=4cm, anchor=center,draw=yellow!90,fill=yellow!90,align=center, yshift=-4cm,visible on=<3->] (DATASCHEMA) {%
+    \begin{tabular}{l} 
+        \parbox{2.1cm}{\texttt{swot:DataSchema}}
+    \end{tabular}
+};
+
+\node[state,draw=green!90,right of=DATA, node distance=6.5cm, fill=green!90,align=center,visible on=<3->] (BOOLEAN) {
+\begin{tabular}{l}
+  \parbox{1.5cm}{\texttt{xsd:boolean}}
+   \end{tabular}
+};
+
+\node[state,draw=green!90,right of=DATA, node distance=5.5cm, fill=green!90,align=center,yshift=-1cm,visible on=<3->] (STABILITY) {
+\begin{tabular}{l}
+  \parbox{2.1cm}{\texttt{xsd:unsignedLong}}
+   \end{tabular}
+};
+
+\node[state,yshift=-2.5cm,draw=green!90,right of=ACTION, node distance=2cm, fill=green!90,align=center,visible on=<3->] (LITERAL) {
+\begin{tabular}{l}
+  \parbox{1.5cm}{\texttt{xsd:Literal}}
+   \end{tabular}
+};
+
+\node[state,draw=green!90,right of=THINGDESCRIPTION, node distance=8cm, fill=green!90,align=center,visible on=<1->] (NAME) {
+\begin{tabular}{l}
+  \parbox{1.1cm}{\texttt{xsd:name}}
+   \end{tabular}
+};
+
+
+
+\node[state,draw=none,right of=DATASCHEMA, node distance=3cm, yshift=-.8cm,align=center] (LEGEND) {
+\begin{tabular}{l}
+  \parbox{10cm}{
+  \textbf{\tiny{\textcolor{yellow!90}{Classes} \hspace{.5cm}\textcolor{blue}{Object Properties}\hspace{.5cm}\textcolor{green!90}{Literals, Data Properties}}}}
+  \end{tabular}
+};
+ 
+\path (THINGDESCRIPTION)     edge[draw=blue,visible on=<1->]  node[anchor=east]{\textcolor{blue}{\texttt{swot:hasInteractionPattern}}}   (INTERACTIONPATTERN)
+(INTERACTIONPATTERN)     edge[draw=green,visible on=<1->]  node[anchor=west]{\textcolor{green}{\texttt{swot:hasName}}}   (NAME)
+(ACTION)   edge[draw=blue,bend left=10,visible on=<2->] node[anchor=east]{\textcolor{blue}{\texttt{rdfs:subClassOf}}}                      (INTERACTIONPATTERN)  
+(PROPERTY)   edge[draw=blue,visible on=<2->] node[anchor=south, above]{\textcolor{blue}{\texttt{rdfs:subClassOf}}}  (INTERACTIONPATTERN)  
+(EVENT)   edge[draw=blue,bend right=10,visible on=<2->] node[anchor=north]{\textcolor{blue}{\texttt{rdfs:subClassOf}}}  (INTERACTIONPATTERN)
+(ACTION)     edge[draw=blue,visible on=<2->] node[anchor=north west, above]{\textcolor{blue}{\texttt{swot:forProperty}}} (PROPERTY)
+(EVENT)   edge[draw=blue,visible on=<2->] node[text width=2cm,anchor=south]{\textcolor{blue}{\texttt{swot:forProperty}}}                                (PROPERTY)
+(PROPERTY)   edge[draw=green, bend left=10,visible on=<3->] node[anchor=west]{\textcolor{green}{\texttt{swot:isWritable}}}                                (BOOLEAN)
+(PROPERTY)   edge[draw=green, anchor=north west, bend right=20,visible on=<3->] node[text width=2cm,yshift=-.1cm]{\textcolor{green}{\texttt{swot:hasStability}}}                                (STABILITY)
+(PROPERTY)   edge[draw=blue,visible on=<3->] node[anchor=north, above,yshift=-1.4cm]{\textcolor{blue}{\texttt{swot:has[P]DataSchema}}}  (DATASCHEMA)
+(PROPERTY)   edge[draw=blue,visible on=<3->] node[anchor=south,yshift=-.1cm]{\textcolor{blue}{\texttt{swot:hasData}}}  (DATA)
+(DATA)   edge[draw=green,visible on=<3->] node[]{\textcolor{green}{\texttt{swot:hasValue}}}  (LITERAL)
+(DATA)   edge[draw=blue, bend left=30,visible on=<3->] node[]{}  (DATASCHEMA)
+(EVENT)   edge[draw=blue, bend left=50,visible on=<3->] node[anchor=north, above]{\textcolor{blue}{\texttt{swot:has[O]DataSchema}}}  (DATASCHEMA)
+(ACTION)   edge[draw=blue, bend right=40,visible on=<3->] node[anchor=north,yshift=-.5cm]{\textcolor{blue}{\texttt{swot:has[I|O]DataSchema}}}  (DATASCHEMA)
+;   
+
+\end{tikzpicture}

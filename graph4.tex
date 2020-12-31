@@ -1,0 +1,86 @@
+\begin{tikzpicture}[->,>=stealth']
+
+\node[state,draw=yellow!90,fill=yellow!90,align=center, visible on=<1->] (THING) {
+\begin{tabular}{l}
+  \parbox{1.3cm}{\texttt{swot:Thing}}
+   \end{tabular}
+};
+  
+ % State: ACK with different content
+ \node[state, right of=THING, node distance=7cm, yshift=1.5cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (THINGDESCRIPTION) {%
+    \begin{tabular}{l} 
+        \parbox{3.1cm}{\texttt{swot:ThingDescription}}
+    \end{tabular}
+};
+
+
+ % State: ACK with different content
+ \node[state,  yshift=1.5cm, node distance=3cm, anchor=center, draw=green!90,fill=green!90,align=center, visible on=<1->] (THINGNAME) {%
+    \begin{tabular}{l} 
+        \parbox{1cm}{\texttt{xsd:name}}
+    \end{tabular}
+};
+
+\onslide<2->{
+   % State: ACK with different content
+\node[state, yshift=-1.5cm, anchor=center, right of=THING, node distance=1.5cm, draw=purple!90,fill=purple!90,align=center,text=white,visible on=<2->] (C3PO) {%
+    \begin{tabular}{l}
+        \parbox{3.6cm}{\texttt{http://webthing.org/C-3PO}}
+    \end{tabular}
+};
+
+ % State: ACK with different content
+ \node[state,  yshift=-3cm, node distance=3cm, anchor=center, draw=green!90,fill=green!90,align=center,visible on=<2->] (C3PONAME) {%
+    \begin{tabular}{l} 
+        \parbox{1cm}{\texttt{'C-3PO'}}
+    \end{tabular}
+};
+  
+\node[state, right of=C3PO, yshift=-1.2cm, node distance=5cm, anchor=center, draw=purple!90,fill=purple!90,align=center,text=white,visible on=<2->] (TATOOINE) {%
+    \begin{tabular}{l} 
+        \parbox{2.3cm}{\texttt{dbpedia:Tatooine}}
+    \end{tabular}
+};
+
+\node[state, anchor=center, 
+right of=C3PO, 
+draw=purple!90,fill=purple!90, yshift=1.5cm,
+align=center,text=white, node distance=6cm,visible on=<2->] (C3POTD) {%
+    \begin{tabular}{l}
+        \parbox{4cm}{\texttt{http://webthing.org/C-3PO/TD}}
+    \end{tabular}
+};
+
+ \node[state, right of=C3PO, node distance=6cm, anchor=center,draw=purple!90,fill=purple!90,text=white,align=center,visible on=<2->] (DBPEDIAC3PO) {%
+    \begin{tabular}{l} 
+        \parbox{1.8cm}{\texttt{dbpedia:C-3PO}}
+    \end{tabular}
+};
+
+\node[state,yshift=-2cm,draw=purple!90,right of=C3PO, node distance=1.5cm, fill=purple!90,text=white,align=center,visible on=<2->] (ANAKIN) {
+\begin{tabular}{l}
+  \parbox{3.4cm}{\texttt{dbpedia:Anakin\_Skywalker}}
+   \end{tabular}
+};
+}
+
+\node[state,draw=none,right of=THING, node distance=5cm, yshift=-4.3cm,align=center,visible on=<1->] (LEGEND) {
+\begin{tabular}{l}
+  \parbox{10cm}{
+  \textbf{\tiny{\textcolor{yellow!90}{Classes} \hspace{.5cm}\textcolor{purple!90}{Individuals}\hspace{.5cm}\textcolor{blue}{Object Properties}\hspace{.5cm}\textcolor{green!90}{Literals, Data Properties}}\hspace{.5cm}\textcolor{red}{rdf:type}}}
+  \end{tabular}
+};
+
+\path 
+(THING)     edge[draw=blue,visible on=<1->]  node[anchor=south,above]{\textcolor{blue}{\texttt{swot:hasThingDescription}}}   (THINGDESCRIPTION)
+(THING)     edge[draw=green,visible on=<1->]  node[anchor=west]{\textcolor{green}{\texttt{swot:hasName}}}   (THINGNAME)
+(C3PO)   edge[draw=red,bend left=30,visible on=<2->] node[anchor=west]{\textcolor{red}{\texttt{a}}}                      (THING)  
+(C3POTD)   edge[draw=red, bend right=30,visible on=<2->] node[anchor=south, above]{\textcolor{red}{\texttt{a}}}  (THINGDESCRIPTION)  
+(C3PO)   edge[draw=blue,bend left=10,visible on=<2->] node[anchor=north]{\textcolor{blue}{\texttt{swot:hasThingDescription}}}  (C3POTD)
+(C3PO)     edge[draw=green, bend right=30,visible on=<2->] node[anchor=north west, above]{\textcolor{green}{\texttt{swot:hasName}}} (C3PONAME)
+(C3PO)   edge[draw=blue, bend right=10,visible on=<2->] node[text width=2cm]{\textcolor{blue}{\texttt{prov:atLocation}}}                                (TATOOINE)
+(C3PO)   edge[draw=blue,visible on=<2->] node[anchor=east]{\textcolor{blue}{\texttt{foaf:maker}}}                                (ANAKIN)
+(C3PO)   edge[draw=blue, anchor=south,visible on=<2->] node[text width=2cm]{\textcolor{blue}{\texttt{owl:sameAs}}}                                (DBPEDIAC3PO)
+;   
+
+\end{tikzpicture}

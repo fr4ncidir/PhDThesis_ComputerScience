@@ -1,0 +1,47 @@
+\begin{tikzpicture}[remember picture, 
+    font=\footnotesize]
+
+%Place a `comment` node with all text inside a tabular  
+ \node(comments) {\begin{tabular}{r@{ }l}
+        \subnode{A}{\textbf{HTTP GET}}:& \\
+        \tiny{SPARQL 1.1 Query payload}\\
+       \subnode{B}{\textbf{Response payload}}:& \\
+       \tiny{JSON with SPARQL variable binding}\\[3mm]
+       \subnode{C}{\textbf{HTTP POST}}:& \\
+        \tiny{SPARQL 1.1 Update payload}\\
+        \subnode{D}{\textbf{Response}}:& \\
+       \tiny{HTTP response code}\\[3mm]
+        \subnode{E}{\textbf{WebSocket open}}:& \\
+       \tiny{Engine SPU setup, 1st notification generation}\\
+        \subnode{F}{\textbf{1st notification}}:& \\
+       \tiny{Query-like JSON with SPARQL variable binding}\\
+        \subnode{G}{\textbf{Additional notifications}}:& \\
+       \tiny{JSON with $\Delta$ (added and removed) bindings only}\\
+       \end{tabular}};
+
+% Place `server` and `client` nodes
+\node[above left=1mm and 0mm of comments] (graphkb) {\textbf{Graph KB}}; 
+\node[left=10mm of graphkb] (sepa) {\textbf{SEPA}}; 
+\node[left=10mm of sepa] (client) {\textbf{Client}}; 
+
+%Draw vertical lines
+\draw (client) -- (client|-comments.south);
+\draw (sepa) -- (sepa|-comments.south);
+\draw (graphkb) -- (graphkb|-comments.south);
+
+%Draw message interchanges
+\draw[->, visible on=<1->] (A-|client)--node[below]{query} (A-|sepa) ;
+\draw[->, visible on=<1->] (A-|sepa)--node[below]{query} (A-|graphkb) ;
+\draw[->, visible on=<1->] (B-|graphkb)-- node[below]{bindings} (B-|sepa) ;
+\draw[->, visible on=<1->] (B-|sepa)-- node[below]{bindings} (B-|client) ;
+
+\draw[->, visible on=<2->] (C-|client)--node[below]{update} (C-|sepa) ;
+\draw[->, visible on=<2->] (C-|sepa)--node[below]{update} (C-|graphkb) ;
+\draw[->, visible on=<2->] (D-|graphkb)-- node[below]{200 OK} (D-|sepa) ;
+\draw[->, visible on=<2->] (D-|sepa)-- node[below]{200 OK} (D-|client) ;
+
+\draw[->, visible on=<3->] (E-|client)--node[below]{subscribe} (E-|sepa) ;
+\draw[<->, visible on=<3->] (E-|sepa)--node[below]{SPU creation} (E-|graphkb) ;
+\draw[->, visible on=<3->] (F-|sepa)-- node[below]{Q notification} (F-|client) ;
+\draw[->, visible on=<4->] (G-|sepa)-- node[below]{$\Delta$ notification} (G-|client) ;
+\end{tikzpicture}

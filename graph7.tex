@@ -1,0 +1,84 @@
+\begin{tikzpicture}[->,>=stealth']
+  
+ % State: ACK with different content
+ \node[state, anchor=center, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (ACTION) {%
+    \begin{tabular}{l} 
+        \parbox{1.5cm}{\texttt{swot:Action}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=ACTION, node distance=6.5cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (ACTIONINSTANCE) {%
+    \begin{tabular}{l} 
+        \parbox{2.8cm}{\texttt{swot:ActionInstance}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=ACTION, node distance=3cm, yshift=1cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (THING) {%
+    \begin{tabular}{l} 
+        \parbox{1.4cm}{\texttt{swot:Thing}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=ACTION, node distance=1cm, yshift=-2cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (DATASCHEMA) {%
+    \begin{tabular}{l} 
+        \parbox{2cm}{\texttt{swot:DataSchema}}
+    \end{tabular}
+};
+ 
+ \node[state, anchor=center, right of=DATASCHEMA, node distance=6cm,  draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (DATA) {%
+    \begin{tabular}{l} 
+        \parbox{1.2cm}{\texttt{swot:Data}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=DATASCHEMA, node distance=2cm, yshift=1cm, draw=green!90,fill=green!90,align=center,visible on=<2->] (LITERAL) {%
+    \begin{tabular}{l} 
+        \parbox{1.5cm}{\texttt{xsd:Literal}}
+    \end{tabular}
+};
+
+% \node[state, anchor=center, right of=ACTION, node distance=1cm, yshift=-3.5cm, draw=yellow!90,fill=yellow!90,align=center,draw=none] (EVENTINSTANCE) {%
+%    \begin{tabular}{l} 
+%        \parbox{2.5cm}{\texttt{swot:EventInstance}}
+%    \end{tabular}
+%};
+ 
+ \node[state, anchor=center, right of=ACTION, node distance=8cm, yshift=-3.5cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<2->] (INSTANCE) {%
+    \begin{tabular}{l} 
+        \parbox{1.8cm}{\texttt{swot:Instance}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=ACTION, node distance=1cm, yshift=-4.8cm, draw=yellow!90,fill=yellow!90,align=center,visible on=<1->] (EVENT) {%
+    \begin{tabular}{l} 
+        \parbox{1.4cm}{\texttt{swot:Event}}
+    \end{tabular}
+};
+
+ \node[state, anchor=center, right of=ACTION, node distance=9cm,yshift=-4.8cm, draw=green!90,fill=green!90,align=center,visible on=<2->] (DTS) {%
+    \begin{tabular}{l} 
+        \parbox{2.4cm}{\texttt{xsd:dateTimeStamp}}
+    \end{tabular}
+};
+
+\node[state,draw=none,right of=ACTION, node distance=7.5cm, yshift=-5.8cm,align=center] (LEGEND) {
+\begin{tabular}{l}
+  \parbox{10cm}{
+  \textbf{\tiny{\textcolor{yellow!90}{Classes} \hspace{.5cm}\textcolor{blue}{Object Properties}\hspace{.5cm}\textcolor{green!90}{Literals, Data Properties}}}}
+  \end{tabular}
+};
+ 
+\path (ACTIONINSTANCE)     edge[draw=blue, bend right=20,visible on=<2->]  node[anchor=west]{\textcolor{blue}{\texttt{swot:requestedBy}}}   (THING)
+(ACTION)     edge[draw=blue,visible on=<2->]  node[anchor=south]{\textcolor{blue}{\texttt{swot:hasActionInstance}}}   (ACTIONINSTANCE)
+(ACTIONINSTANCE)   edge[draw=blue,bend left=40,visible on=<2->] node[yshift=-1cm]{\textcolor{blue}{\texttt{rdfs:subClassOf}}}                (INSTANCE)  
+(ACTIONINSTANCE)   edge[draw=green,bend left=60,visible on=<2->] node[anchor=east,yshift=-2.1cm]{\textcolor{green}{\texttt{swot:has[R|Conf|Comp]TimeStamp}}}  (DTS)  
+%(EVENTINSTANCE)   edge[draw=green,bend right=10] node[anchor=north]{\textcolor{green}{\texttt{swot:occurredAt}}}  (DTS)
+%(EVENTINSTANCE)     edge[draw=blue] node[anchor=south]{\textcolor{blue}{\texttt{rdfs:subClassOf}}} (INSTANCE)
+%(EVENTINSTANCE)   edge[draw=blue] node[text width=2cm,anchor=south]{\textcolor{blue}{\texttt{swot:has[O]Data}}}     (DATA)
+(DATA)   edge[draw=blue,visible on=<2->] node[anchor=south]{\textcolor{blue}{\texttt{swot:has[I|O]DataSchema}}}       (DATASCHEMA)
+%(EVENT)   edge[draw=blue] node[text width=2cm,yshift=.4]{\textcolor{blue}{\texttt{swot:hasEventInstance}}}   (EVENTINSTANCE)
+(DATA)   edge[draw=green, bend right=20,visible on=<2->] node[anchor=west, above]{\textcolor{green}{\texttt{swot:hasValue}}}  (LITERAL)
+(ACTIONINSTANCE)   edge[draw=blue,visible on=<2->] node[anchor=south east, yshift=.3cm]{\textcolor{blue}{\texttt{swot:has[I|O]Data}}}  (DATA)
+;   
+
+\end{tikzpicture}
