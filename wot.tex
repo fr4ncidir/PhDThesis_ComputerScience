@@ -1,0 +1,481 @@
+\headletter{P}
+reviously the discussions outlined that various approaches are considered in literature to define Things \cite{liu2016comparison}. With reference to the views suggested in Section~\ref{sec:iomust} we designed the Internet of Musical Things ontology relying on IEEE's interpretation of thing definition. Such definition, by focusing on \textit{application perspective}, implies a specific description of the various layers building the application. 
+
+For this reason we created the IoMusT ontology leveraging a layered setup (see Fig.~\ref{fig:fig1}) including sensing and actuating, location, agents as well as generic activities. However, while the single musical application was described (see Fig.~\ref{graph:activities}), a global view of systems interacting with other systems was missing.
+
+Such global and inclusive interpretation of IoT is the subject of this Chapter, where the transition to Semantic Web of Things will be explored, and where we suggest some ideas that are currently scheduled for the future, and some of the topics of the next Chapter.
+
+The contents of this Chapter are inspired from the main research carried by the author of this Thesis and his colleagues over the PhD duration, and recently published\footnote{~\faCopyright~2019 IEEE~~Reprinted, with permission, from Antoniazzi, F. \& Viola, F. (2019) Building the semantic web
+of things through a dynamic ontology. IEEE Internet of Things Journal, early access}.
+
+\section{W3C Web of Things vision}
+We already mentioned important research on the WoT \cite{guinard2011internet, zeng2011web, raggett2015web}. The most complete idea and implementation guidelines of Web of Things, to the best of our knowledge, have been given over the last years by a working group created by the W3C\footnote{\faLink~\url{https://www.w3.org/WoT/WG/}}.
+
+In particular, the working group realized a set of drafts that are (as for September 2019) now Candidate Recommendations. We will here go through two of them, namely the \textit{W3C WoT Architecture}\footnote{\faLink~\url{https://www.w3.org/TR/2019/CR-wot-architecture-20190516/}} and the \textit{W3C WoT Thing Description}\footnote{\faLink~\url{https://www.w3.org/TR/2019/CR-wot-thing-description-20190516/}}, that over their evolution represented a starting point for our work.
+
+Let us consider, first of all, the W3C WoT Architecture. The draft is organized to provide a Web of Things vision of the future connected environments: therefore a complete report of possible use cases is given. All of them, except the thing-to-thing paradigm have in common the fact that the data retrieved by sensing units is consumed far beyond the limits of the local environment. That is, we imply that there is an information step similar to the one included in a fog computing \cite{bonomi2012fog} environment: data is locally collected as well as locally elaborated to get some higher level information to be sent into the Internet to consumers. The usages are unnumbered, and are already part of everyone's everyday life.
+
+The implementation patterns, in this context, are also analyzed: the thing-to-thing paradigm is observed side by side with gateway mediated approaches. Gateway solutions in some cases have also access to the Web, providing the possibility to interact from outside the system, and in some others situations are limited to an internal function of communication enablers among different technologies. Another idea included is the \textit{digital twin}, i.e. the possibility to interact with a virtual representation of the device and not necessarily with the physical item directly. The twin concept is at the basis of the Thing Description as we intend in this Thesis (see Section \ref{ssec:semantic_web_things}), where a semantic responsive twin is provided through the capabilities of SEPA (see Section~\ref{sec:siot_sepa}).
+
+Going further, a set of requirements are given for the Web of Things based on the aforementioned technologies. For instance it is stated that the usage of the standard protocols of the Web, and the realization of virtual environments accessible through a RESTful approach is an essential core feature of the WoT. Interoperability and scalability are an additional must, although they are subject to case-by-case development. In this work, we will suggest a semantic interoperability.
+
+Devices, indeed, must also be discoverable. At application level this implies that we should have the possibility to describe devices, and that a uniform method should be provided. Things, moreover, exchange data with each other, with humans, with the cloud, in various formats. The description for discoverability should include the formatting information formalization, as there is no way to achieve interoperability if shared information meaning is not common among the actors.
+
+W3C changed and adjusted the Thing Description logic several times since the creation of the Working Group. Consequently in this Thesis there may be some differences with the actual candidate recommendations available (September 2019). In next Section, in any case, we will clearly specify which is the draft that has to be considered as a reference. 
+
+When considering the Thing Description explained by W3C versus the semantic solution outlined in this Thesis it is worth considering what follows. The Thing Description, as it is visible in the provided drafts, is given as a JSON-LD file containing the information formalized in a taxonomy identifying thing capabilities in a shared fashion. The goal of such taxonomy is not to grant a semantic vision of the Web of Things, but rather to assure as much as possible machine understanding of descriptions. Differently, by the means of SEPA's publish subscribe, we hereby not only give access to a common understanding of descriptions, but also the possibility to interact through that same platform, i.e., in an environment designed to be interoperable.
+
+\section{A Dynamic Ontology for the Semantic Web of Things}
+\label{sec:swot_ontology}
+As it is reported in the previous Sections, the Web of Things has recently appeared as the latest evolution of the Internet of Things and, as the name suggests, requires that devices interoperate through the Internet using Web protocols and standards. Currently only a few theoretical approaches have been presented by researchers and industry, to fight the fragmentation of the IoT world through the adoption of semantics. This further evolution is known as Semantic Web of Things and relies on a WoT implementation crafted on the technologies proposed by the Semantic Web stack. This Section presents a working implementation of the Web of Things declined in its Semantic flavour through the adoption of a shared ontology for describing devices. In addition to that, the ontology includes patterns for dynamic interactions between devices, and therefore we define it as dynamic ontology.
+
+This ontology, named SWOT \ontoref{swot}, realizes a high-level abstraction of the devices taking part in a smart application and of their capabilities leveraging the concept of Thing Description proposed for the WoT by Charpenay et al.\cite{charpenay2016introducing}. 
+
+In addition to that, this Thesis also addresses one of the main limitations that apply to the SWoT: ontologies and semantic-formatted data are considered to be static, while any real context is continuously evolving dynamically. To do so, the ontology presented here offers the tools to build a static description of the \textit{things} along with a set of concepts that regulate the dynamic interaction. We include in the knowledge pattern a prototype of what the actual thing behavior looks like both when an actuation is triggered, or when a sensor is required to communicate its current measurement.
+
+Moreover, through the presented ontology we suggest a solution to the problem of discoverability \cite{guinard2016building} of devices. Along with the main contribution we propose also a framework, named Cocktail, which is a practical realization of both the static and dynamic ontological concepts (see Sections \ref{sssec:static_interaction}). It is made for the fast and automatic prototyping of software agents, and will allow us to provide a proof of concept of how it is possible to build a SWoT environment and orchestrate it. The ontology, together with its applications and capabilities, will be evaluated.
+
+The SWOT ontology can be employed with any of the available standard SPARQL endpoints. Nonetheless, due to the dynamic nature of IoT applications, and therefore of SWoT applications, the whole study considers and takes advantage of the SPARQL Processing Event Architecture (SEPA) \cite{roffia2016semantic,roffia2018dynamic} as reference architecture. SEPA aims to enhance triple stores with a publish-subscribe layer on top the SPARQL 1.1 protocol. SEPA clients, then, by using SPARQL 1.1 subscribe\footnote{\faLink~\url{http://mml.arces.unibo.it/TR/sparql11-subscribe.html}} and update languages can respectively subscribe to and publish semantic data. This means that with SEPA it is possible to easily create a semantic representation of the context and keep it coherent with the physical environment as time passes.
+
+We consider that the usage of semantics to enable interactions within devices defines the concept of dynamic  ontology as it is intended in the title of this research.
+In particular, the SWOT ontology includes the concepts devoted to a static representation of devices, as well as their interaction with other things, which is of course characterized by a high mutability. By binding our work to publish/subscribe semantic endpoints like SEPA, we allow the knowledge base to be constantly up to date with the context. The dynamic ontology not only describes the abstract context, but also permits following its real-time evolution.
+
+Before going in the details of the presented work, we propose a summary of the contributions achieved through our approach:
+\begin{enumerate}
+    \item Representation of the W3C's Thing Description model (Charpenay et al. \cite{charpenay2016introducing}) through Semantic Web standards (i.e., OWL). The main outcome of this activity is an easy, high-level and general ontology for the formalization of Web Thing profiles;
+    \item Such representation, carefully refined after a comparison with the ontology proposed by Serena et al. \cite{serena2018discovery}, was then extended to support the Semantic Web Thing Interaction (see Section~\ref{ssec:interaction_patterns}) in addition to discovery;
+    \item Concerning the last point, as shown in Sections \ref{ssec:semantic_web_things} and \ref{ssec:cocktail_eval}, the discovery mechanism based on the proposed ontology is flexible and fully customizable (e.g., by further extending the semantic descriptions with other ontologies).
+    \item Development of an intuitive framework (i.e. Cocktail see Section \ref{ssec:cocktail}) providing high-level APIs enabling an even easier approach to the adoption of the ontology;
+    \item Formalization of a domain-agnostic methodology and a framework supporting the device interaction by means of any standard SPARQL endpoint. In particular, we suggest the adoption of SEPA which provides the ability to develop a responsive system based on its subscription mechanism.
+\end{enumerate}
+
+Head to Fig.~\ref{fig:full_ontology} for a full view of the SWOT ontology.
+
+\subsection{Related Work}
+In the past twenty years, several works have introduced and explained the Semantic Web view. Going back to 2001, Tim Berners-Lee et al. discussed in \cite{berners2001semantic} the driving ideas and concepts of a still prototypical Semantic Web through some practical examples. The paper's focus was to highlight in a few examples the situations in which the currently available Web is either insufficient, or insufficiently exploited. 
+
+Following this research stream, Shadbolt et al. in \cite{shadbolt2006semantic} studied the meaning of the term \textit{ontology} in the Semantic Web. The concept of ontology seems to offer a (at least partial) solution, to the great information disorder that is an inner consequence of the Internet decentralization. Far from the philosophical meaning of the term, i.e., the absolute and unique reality of the being, an ontology is a set of relationships between some well-identified entities, listed in a machine understandable way (namely, the RDF format). The challenges foreseen in Shadbolt's paper, and that effectively we are facing nowadays, are the reuse of available ontologies to produce data \cite{uschold1998ontology, bontas2005case, pan2006semantic}, the alignment of ontologies exposing the same concepts \cite{karim2007providing}, and the effective exploration and visualization of the data graph \cite{antoniazzi2018rdf, bikakis2016exploration}.
+
+All those concepts apply also to the IoT, whenever an attempt is made to semantically describe its contents. For instance, ontologies modeling the physical-digital interface are, among all, the \textit{Sensor, Observation, Sample, and Actuator} and the \textit{Semantic Sensor Network} \ontoref{sosa, ssn} ontologies. Although being largely documented, SSN and SOSA still offer a complex approach to description of hardware, observation of physical entities and actuation, that may be particularly cumbersome if the aim of the work is the formal semantic expression of any IoT service. For this reason, using an ISO-OSI stack metaphor, the ontology presented in this Thesis acts as upper ontology located at application level, while SOSA and SSN are at physical and data-link levels.
+
+In addition to this aspect, IoT presents also another facet, which is the time-related evolution of its context \cite{rinne2013event}. The \textit{Time ontology}\footnote{\url{https://www.w3.org/TR/owl-time/}}, and the \textit{Event ontology} \ontoref{event} have been developed to this extent, in order to categorize both the flow of time and asynchronous behaviors in the RDF graph. Their design, however, was made for the static description \textit{a posteriori} of a sequence of events, while the SWOT ontology targets real-time awareness of context evolution.
+
+Other works, e.g. OpenIoT \cite{soldatos2015openiot}, IoT-O  \cite{seydoux2016iot}, IoT-Lite \cite{bermudez2017iot}, either use one of the previously cited ontologies like SSN, either design a lower level description of devices almost at hardware level. This is something that in this research we want to avoid, to provide to the developer only high level interfaces.
+
+Different works in literature propose IoT architectures enhanced with semantics. The following lines report an overview of these works, starting from those having semantics in a limited set of components and concluding with those oriented at a semantic description of things. 
+Puiu et al. \cite{puiu2016citypulse} presented an IoT framework for smart cities named CityPulse. This framework adopts semantics in two of its components (i.e., namely Data wrapper and Data Federation). The first provides semantic annotations based on the Stream Annotation Ontology (SAO) and the Quality Ontology (QO) as well as on the information models developed on top of the above-mentioned SSN Ontology, PROV-O, and OWL-S. The second module is instead used to answer users' queries that are translated into RDF Stream Processing (RSP) requests. Then, the overall role of semantics in this framework is limited to discovery, data analytics, and interpretation of large-scale data. As in our case, semantics has been adopted to foster interoperability among heterogeneous entities. Moreover, CityPulse, is constrained to the domain of smart city applications.
+
+The same domain is addressed by Kamilaris et al. in \cite{kamilaris2017web}. In this work, semantics is the glue among the IoT/WoT elements and is used to annotate sensory data streams. Annotation is achieved through an information model based, once again on \ontoref{ssn} and OWL-S and the adoption of ontologies like the above-mentioned SAO, the COmplex Event Ontology and \ontoref{prov} (just to name a few).
+
+Kamilaris et al. also proposed Agri-IoT \cite{kamilaris2016agri} a semantic framework for IoT-based smart farming applications supporting multiple heterogeneous sensor data streams. The framework provides a complete semantic processing pipeline, offering a common framework for smart farming applications. It re-uses a set of components of the CityPulse framework \cite{puiu2016citypulse} as well as modules from FIWARE, ThingSpeak and OpenIoT.  Devices are handled by the device manager module borrowed from FIWARE IoT Backend that is based on NSGI-LD. In our work we adopt the Web Thing abstraction to describe devices in terms of properties, events and actions and we applied this model to a SEPA-based ecosystem. SEPA and NGSI-LD are not conflicting, as demonstrated by our research work \cite{viola2019fiware}.
+
+All the ontologies mentioned in the previous lines, and many others available for research and usage in the World Wide Web, have the common goal of overcoming a fragmented world, where every solution cannot easily communicate with the one developed in the nearby office \cite{tommasini2016towards}. This well known nightmare of IoT researchers is analyzed in \cite{al2015toward}, for instance, listing the causes of fragmentation of IoT (e.g., the coexistance of resource constrained and rich devices in environments). Many researches suggest the usage of a gateway to solve this problem (e.g., \cite{zhu2010iot, datta2014iot}), while in \cite{zachariah2015internet} Zachariah et al. highlight the limitations of such kind of approach, though proposing, as for today's state of the art, a rather difficult to realize smartphones-as-a-gateway solution. 
+
+Semantic Web was also included in this discussion: for instance, to foster the horizontal communication of vertical silos, Desai et al. propose a semantic approach, studied developing a protocol translation gateway \cite{desai2015semantic}. This idea of enhancing IoT by unification and translation at information level, rather than at lower protocols, is also followed by Gangemi et al. in \cite{gangemipattern}, where they propose the IoT Application Profile (IoT-AP) ontology with the aim of representing and modelling the knowledge in the Internet of Things. In \cite{wang2012comprehensive}, as well, an ontology is suggested and associated with the tasks of discovery and dynamic composition: this work differs from ours, as the ontology there is neither designed with the purpose of context evolution, nor targets the Semantic WoT, but the plain IoT.
+
+The interest of the IoT community in what the Semantic Web has to offer is
+also demonstrated by ontology repositories for IoT and smart cities (e.g., Ready4SmartCities, OpenSensingCity, LOV (Linked Open Vocabularies)~\cite{vandenbussche2017linked} and LOV4IoT~\cite{gyrard2016lov4iot})
+and their impressive growth~\cite{Gyrard2018BuildingIA}. As an example, LOV, standing
+at the analysis proposed by Gyrard et al.~\cite{Gyrard2018BuildingIA}, stepped from less than one hundred to more than five hundred ontologies in the period between March 2011 and June 2015 (and more than 650 are available as of December 2018). As already said, discovery and orchestration of resources are killer applications of semantics applied to the IoT. 
+
+The problem of discovering available resources in a network (i.e., the \textit{discoverability problem}~\cite{guinard2016building}) is well known in research~\cite{Razzaque2016MiddlewareFI} and several solutions have been provided over the years. It can be also addressed through ad-hoc protocols (like the one proposed in~\cite{wu2016privacy}, focused on privacy requirements), protocol-specific tools (e.g., CoAP-based discovery was proposed by Djamaa et al. in~\cite{djamaa2018fetchiot} and Viola et al. in~\cite{viola2018cminor}, while XMPP-based solution is proposed in~\cite{waher2018internet}) and gateway-based approaches~\cite{cirani2014scalable}. Semantics in this scenario has been proposed in several research contributions~\cite{mayer2011extensible,Fredj2014EfficientSI,desai2015semantic,Ganzha2016SemanticTF,gao2014semantic}. Kamilaris et al. in \cite{kamilaris2016wots2e} presented WOT2SE, a search engine for the Web of Things based on web crawlers that scan Linked Data endpoints. In our work instead, we rely on a central broker, i.e. SEPA, where discovery can be made by means of SPARQL queries/subscriptions either directly or indirectly (e.g., through high-level tools like the WoT store \cite{sciullo2019wot}).
+
+On the other hand, orchestration/choreography~\cite{dar2011adaptable} refers to the centralized/decentralized composition of services to perform complex tasks exploiting multiple elementary components. The creation of a seamless flow of information through IoT devices and services turns out to be a challenging task due to the: 1) heterogeneity of devices; 2) the heterogeneity of data; 3) the unpredictability of the availability of devices and information. Heterogeneity of shared information can be overcome only through an agreed understanding of its composition, while the latter issue can be addressed through an effective discovery mechanism. It is then clear how semantics may help the development of service composition functionalities in large-scale scenarios. In this sense it is important to keep track of the provenance of the information and, again, this can be achieved through a well established ontology, like \ontoref{prov}. Several approaches to orchestration/choreography have been proposed over the years. Tzortzis et al. \cite{Tzortzis2016ASA} present a semi-automatic approach to service composition. Viola et al. \cite{viola2018playsound} propose an example of orchestration of \textit{virtual things} applied to the Semantic Audio research area. Song et al.~\cite{song2010semantic} propose a middleware based on Semantic Web techonologies aimed at the automatic configuration of an heterogeneous network with service composition functionalities. In literature it is also common to find approaches based on large IoT frameworks and architectures supporting service composition like Arrowhead~\cite{delsing2017iot}, OpenIoT~\cite{jayaraman2015addressing} and IoT-A~\cite{bassi2013enabling}.
+
+As highlighted by Barnaghi et al.~\mbox{\cite{barnaghi2012semantics}} the heterogeneity of devices makes interoperability a challenging problem, which prevents generic solutions  from  being  adopted on a global scale. Due to the key role of Semantic Web technologies in fostering interoperability in the Internet of Things, a new research area pivoting on them is born: the Semantic Web of Things (SWoT). 
+
+Unfortunately, the application of semantic technologies to the IoT is not straigthforward due to the nature of IoT requirements (e.g., constrained devices, unreliable connections)~\cite{barnaghi2012semantics} and this motivates the birth of this new research area.
+
+One of the first research works mentioning the Semantic Web of Things is the one by Pfisterer et al. in \cite{pfisterer2011spitfire}. The authors propose a service infrastructure to make information produced by sensors available to all the possible users through the Linked Open Data cloud, and not just to a single application. While we propose a high-level abstraction of sensors and actuators, Pfisterer et al. focus on the nature of sensors. In both cases tools for the automatic representation of information are provided: in SPITFIRE, knowledge about sensors is inferred and eventually confirmed by the user, while in Cocktail the developer is required to declare properties, events and actions. As regards the discovery mechanism, Pfisterer et al. declare that an  important  functionality is searching  for entities  with a  certain  state  at the time of the query. Due to the high dynamicity of IoT scenarios, SPARQL is not applicable and they developed a heuristic-based system. In our architecture, SEPA (through its subscription mechanism) allows using SPARQL to perform this task also in IoT scenarios.
+
+Ruta et al. in \cite{ruta2012enabling} define the Semantic Web of Things as the adoption of Semantic Web technologies in Internet of Things application. That said, the purpose of their research is rather different from the work
+disclosed in the present Thesis. In fact, Ruta et al. mostly focused on one of the common criticisms to the Semantic Web protocols: their efficiency. The formats adopted in the Semantic Web are generally considered too verbose to allow efficient data storage and management in IoT applications and this motivates their work on efficient compression methods. Despite the different topic, it is interesting to compare the system architectures: the project by Ruta et al. is based on layer named \textit{ubiquitous Knowledge Base} (u-KB), providing access to the information embedded into semantic-enhanced micro-devices. It is a fully-decentralized system, in contrast with SEPA, where the information is always available thanks to a central broker hosting data. In both the architectures, devices are fully decoupled, but SEPA hosting the knowledge base allows: 1) reducing the number of accesses to devices, imporant with constrained devices or when the network is not reliable; 2) hosting the whole knowledge base in a powerful node granting faster access and inference.
+
+As mentioned in the Introduction, the W3C founded a Working and an Interest Group dedicated to the Web of Things, whose challenges are depicted by Ragget \cite{raggett2015web}. Among the various contributions proposed by these groups, it is worth mentioning again Charpenay et al. \cite{charpenay2016introducing}. Within their research, the authors describe a vocabulary specifically built for the WoT. Their main objective, with such vocabulary, is the alignment with the pre-existing W3C achievements on IoT semantic reordering. The cited work relies on the IRE (Identifier, Resource, Entity) ontological pattern, which states that Web resources may act as proxies for real world entities. From this work, we borrow the concept of Thing Description as \textit{Semantic resource formally describing a unique WoT Thing that a software agent can interact with.}, and the concepts of Property, Action and Event (the \textit{interaction patterns} of Web Things). For all those borrowed concepts, however, the SWOT ontology creates the semantic background that in W3C approach is limited to the JSON-LD availability for the Thing Description. In addition to that, we introduce the ontological view of real-time instances for actions and events. The framework proposed in Section \ref{ssec:cocktail} leverages these concepts to provide a practical implementation of all the tools needed to create a full environment.
+
+Ontologies for the so-called (Semantic) Web of Things have been proposed also by other authors. For instance, Serena et al. in \cite{serena2018discovery} proposed an ontology for the discovery of devices in the Semantic Web of Things. With respect to this paper, again, our research goes beyond the pure discovery of devices, enabling the interaction through the semantic broker. The ontology by Serena et al. is also used by Noura et al. \cite{noura2018growth} that propose a framework for the goal-oriented description of web thing interactions. A framework for semantic interoperability in the Web of Things is presented also in \cite{wu2017towards} which combines an extension of the SSN ontology and machine learning techniques. No detail are provided regarding the way subscriptions can be defined.
+
+\subsection{Semantic Web Things}
+\label{ssec:semantic_web_things}
+The core concept of SWoT ontology is the \texttt{swot:Thing} class representing Web Things. Any software, any real world item connected to the Internet with a semantic representation of its capabilities can be considered an instance of this class. In the next Sections the precise patterns that are used in the ontology to describe the Web Thing capabilities will be discussed.
+
+Such definition of Semantic Web Thing is indeed unrelated to the technology realizing it. We might also argue that even the human body can be considered as a connected Web Thing in some situations: applications in healthcare \cite{antoniazzi2017web}, of course, but also research on wearable IoT for everyday life \cite{swan2012sensor}, \cite{gope2016bsn} and music \cite{turchet2017towards} are valid examples. 
+
+The collection of Web Things acting and interacting in a semantic context will be referred to as the Semantic Web Thing Environment (SWTE). Querying the SWTE will eventually result in an inner context-awareness. In the next Sections, in fact, we will see that the evolution of the context is taken into account by the architecture, and therefore the actual physical environment is represented on-the-go in the stored RDF representation. So, in a very simplified example, we may need to be notified of any new device entering in our environment. This can be done with the subscription in Listing~\ref{listing:sparql_all_thing}. As outlined in the Introduction, this research exploits the SEPA subscription mechanism (whose description is out of the scope of this Thesis). As opposed to MQTT protocol\footnote{\faLink~\url{http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html}}, where notifications are topic-based and not specifically focused on RDF knowledge bases, SEPA natively allows SPARQL queries to differentially follow their subgraph over time.
+
+\begin{lstlisting}[caption={SPARQL subscribe to list all Web Things available in the RDF store.},label=listing:sparql_all_thing]
+SELECT * WHERE { ?thing rdf:type swot:Thing }
+\end{lstlisting}
+
+In a slightly more complex situation we may need to be notified of a temperature overcoming a threshold. This will be possible by subscribing to an event once, in Section~\ref{ssec:interaction_patterns}, the \textit{Interaction Patterns} will be explained. 
+
+The whole  ontology, both in the static and dynamic description, is designed to support and easy respond to enquiries on the control of the dynamic evolution of the context, providing a SPARQL-based context awareness. Through the Cocktail framework, presented in Section~\ref{ssec:cocktail}, examples on how to code and use the controls and the ontological description of evolving SWTEs will be provided.
+
+In the RDF representation, a Web Thing's URI can be a dereferenceable resource or, in any case, it should be an appropriately formatted address. A standard compliant Web of Things ecosystem would rely on HTTP(S) addresses over TCP/IP as URIs.
+
+As already proposed by Guinard and Trifa~\cite{guinard2016building}, Web Things can be declared to act as proxies for other Web Things. This may be useful in case of constrained devices (see \cite{bormann2014terminology} for a complete definition of the term) that are not directly reachable at application level, and/or unable to declare themselves in the SWTE. The proxy Web Thing receives and forwards requests in the right format to the proxied Web Things.
+
+Semantic Web Thing discovery is not limited to the SPARQL example provided in Listing \ref{listing:sparql_all_thing}. Exactly as in the IoT, the number of possible ways in which things can be described is almost unlimited. Even the same object, in two different environments, can be described in different ways leveraging, for instance, on other ontologies targeting other descriptive aspects. For this reason the Semantic Web Thing discovery is tightly connected to the semantic feature description of the object: the basic features of a Web Thing are contained in the \textit{thing description}, while an example including other ontologies is given in Section~\ref{ssec:cocktail_eval}. 
+
+In the ontology, the \texttt{swot:Thing} is bound to the \texttt{swot:ThingDescription} through the predicate \texttt{swot:hasThingDescription}. While the former, as already said, is not necessarily a Web resource but must be unique for each Web Thing, the second should be. In particular, any HTTP GET to the thing description resource should respond with a full JSON-LD description of the features of the Web Thing (i.e., the interaction patterns: Actions, Properties and Events, as it is described in the next Sections). This is a useful feature, especially for devices that must be available both from inside the SWTE, and from outside (i.e., the World Wide Web).
+
+To give an example on how to use this first ontology subset, consider Fig.~\ref{fig:swot_fig1}, where the colour code is defined and used in Prot\'{e}g\'{e} \cite{musen2015protege}. In the red box, that is only for suggestion and does not belong to the ontology presented in this work, we added a few straight-forward connections to other ontologies, like \ontoref{prov, dul, foaf}, proving that SWOT ontology integration with other ontologies is possible as well as its usage with DBpedia resources.
+
+\begin{figure*}[h]
+\centering
+\vspace{10pt}
+\includegraphics[width=\textwidth]{fig1.png}
+\vspace{10pt}
+\caption{\texttt{swot:Thing} and \texttt{swot:ThingDescription} partial ontology and a practical example of instances and some suggestions of extensibility with other ontologies.}
+\label{fig:swot_fig1}
+\end{figure*}
+
+\subsection{Interaction Patterns: the PAE paradigm}
+\label{ssec:interaction_patterns}
+When an explanation is needed on \textit{what an object is?}, people often tend to answer to a different question, which is in fact \textit{what is it made for?}. This is in general a reasonable topic change, especially from the engineer's point of view, as the real matter of discussion are the possibilities that can be explored through the usage of the object.
+
+IoT, WoT, and indeed SWoT, comply with this vision: users, both machines and humans, will be discovering the SWTE looking for Web Things because they want to use them in order to achieve something. There is, for this reason, the need of a semantic unified description of the capabilities of objects. Such description has to be both machine and human understandable, as we would like to enable people and AI to choose the right device \cite{hitzler2010reasonable}.
+
+Within this Section, a full description of Semantic Web Thing interactive framework is provided, as explanation of the ontology. As already discussed, the ontology presented in this work borrows some concepts from other works, and extends them with an original contribution. For instance, Charpenay et al. in \cite{charpenay2016introducing}, on behalf of the considerable work of W3C Interest and Working group, introduced the thing description object, while Serena et al.\cite{serena2018discovery} defined the concepts of Property, Action and Event which in this Thesis we call the PAE paradigm. On the 5th April 2018 the W3C released the Thing Description Draft\footnote{\faLink~\url{https://www.w3.org/TR/2018/WD-wot-thing-description-20180405/}}, that leverages the two works aforementioned. Our research takes its origins in such draft.
+
+\subsubsection{\textsf{Static Interaction}}
+\label{sssec:static_interaction}
+The \textit{static interaction} is the abstract description of a connected device feature: in our context the \textit{feature} is basically the need we have to fulfil when using the device. Properties, Actions and Events have been identified by W3C as the best way to represent that concept of feature:
+\begin{enumerate}
+    \item Properties address the need of storing, fixing and defining a device's current state: for example, a smart car's property may be the percentage of gas remaining in its reservoir;
+    \item Actions are the active interactions with the world (i.e., the need to produce, sooner or later and in a finite amount of time, an effect on the environment): a smart car's action may  be  to  switch  on  the  radio;
+    \item Events, which implement the inner asynchronous nature of any agent oriented environment (i.e., the need to be aware of changes in the environment): a  smart car's event may notify the driver that the rear seatbelt is detached, or call for help in case of accident;
+\end{enumerate}
+
+In the present Thesis these three entities are represented as the classes \texttt{swot:Property}, \texttt{swot:Action}, \texttt{swot:Event}, which are all subclasses of the \textit{interaction pattern} concept \texttt{swot:InteractionPattern}. In Fig.~\ref{fig:fig2} the ontology subgraph for the interaction pattern (IP) is shown: it can be noticed that all IPs have a friendly name, and they all can refer to one or more \texttt{wot:DataSchema} to format their data (see Section~\ref{ssec:dataschema_fieldschema}), which can be input data for Actions, output for Actions and Events, or property data for Properties. While for Properties the data is an essential part, and therefore the connection with the DataSchema is compulsory, this is not the case for Actions and Events. They both may produce some output, and Actions may need some input: the choice of including input or output is left to the specific needs of the Web Thing designer.
+
+\begin{figure*}[h!]
+\vspace{10pt}
+\centering
+\includegraphics[width=\textwidth]{fig2.png}
+\vspace{10pt}
+\caption{\texttt{swot:InteractionPattern} subset of the ontology. Actions, events and properties are interaction patterns, receiving inputs and giving outputs according to a data schema (see Section~\ref{ssec:dataschema_fieldschema})}
+\label{fig:fig2}
+\end{figure*}
+
+The Property, in particular, is slightly different from Actions and Events, representing a current state of the device. We then semantically describe it with a friendly name (inherited from the \texttt{swot:InteractionPattern}), a stability and writability flag. The stability's \texttt{xsd:unsignedLong} value identifies in milliseconds the average time that the Property is expected to remain constant. The writability's \texttt{xsd:boolean} flag indicates if the Property is software-definable or not. If yes, it is possible that (i) an Action exists able to allow such software modification, or (ii) an external physical action is required to modify the value (e.g. a mechanical toggle position).
+
+Actions and Events, on their side, apart from inherited object and data properties offer the dynamic interaction which will be treated in the next Subsection pointing to the \texttt{swot:Instance} concept (see Fig.~\ref{fig:fig3}). In addition to that, both actions and events can also refer to the \texttt{swot:Property} they may have effect on (i.e., through the \texttt{swot:forProperty} object property). 
+
+\subsubsection{\textsf{Dynamic interaction: interaction pattern instances}}
+The core discussion of this Subsection is how the dynamicity of interaction is achieved within the SWTE, through the usage of the ontology proposed. In fact, the semantic description of the interaction among Web Things plays a key role for the discussion of the contributions presented here. The evolution of a WoT environment cannot be observed through the immutable characters of the context. The ability to represent also the interactions among the agents is why we attributed the \textit{dynamic} adjective to the our ontology.
+
+To render a mutable environment like the Web Thing Environment over a semantic platform, the latter has to be enriched with a subscription engine. Therefore, to handle such dynamic interaction, we will consider a RDF knowledge base on top of which we add a publish-subscribe architecture like the SEPA, proposed by Roffia et al.~\cite{roffia2016semantic}. SEPA has been designed to be communication-protocol agnostic. In this Thesis HTTP(S) protocols for query and update, plus WebSocket(S) for subscriptions will be considered. There would be, of course, no difference if other choices were made: for instance, a CoAP oriented SEPA  engine called C~minor is being developed for time-constrained musical applications in~\cite{viola2018cminor}.
+
+Once the Semantic Web Thing Description has been given, we expect at run time two possible situations: (i) the request for the execution of an Action, which we call ActionInstance, and define through the \texttt{swot:ActionInstance} class; (ii) an Event notification, which we call EventInstance, and define in the \texttt{swot:EventInstance} class. They both are subclasses of \texttt{swot:Instance}. 
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{fig3.png}
+\caption{\texttt{swot:Instance} subset of the ontology, i.e., how the subgraph for an action request must be formatted, as well as how an Event notification is thrown.}
+\label{fig:fig3}
+\end{figure*}
+See Fig.~\ref{fig:fig3} for the subset of ontology related to dynamic evolution of instances.
+
+Let us first consider an Event instance. In Table~\ref{tab:event_instance} the triples that a Semantic Web Thing must insert in the RDF store to notify the occurrence of an Event with its output content can be observed. Among these triples there is the \texttt{xsd:dateTimeStamp} of occurrence, that is essential to keep a timeline for notifications, and the output of the notification itself. As it will be better explained in the last paragraph of this Section, the exchange of inputs and outputs is another of the sources of dynamicity in the Web of Things that requires the publish-subscribe mechanism.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{\texttt{swot:EventInstance} triples to be inserted in the RDF store to trigger an event notification to all interested entities. Notice that the concept of data schema is explained in Section~\ref{ssec:dataschema_fieldschema}, while the triples needed for the definition of \texttt{swot:MyStringDataSchema} are available in the highlighted rows of Table~\ref{tab:basic_datatype}.}
+\label{tab:event_instance}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}, \texttt{ei}=\texttt{ns:MyEvent/instance/}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyEvent}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern, swot:Event}  \\ \hline
+\texttt{ns:MyEvent}       & \texttt{swot:hasEventInstance}   & \texttt{ei:<uuid>} \\ \hline
+\texttt{ei:<uuid>} & \texttt{rdf:type} & \texttt{swot:EventInstance}  \\ \hline
+\texttt{ei:<uuid>} & \texttt{swot:occurredAt} & \texttt{"2018-12-06T17:00:00Z"\textasciicircum \textasciicircum xsd:dateTimeStamp}  \\ \hline
+\texttt{ei:<uuid>}& \texttt{swot:hasOutputData} & \texttt{ei:<uuid>/outputdata}   \\ \hline
+\texttt{ei:<uuid>/outputdata}& \texttt{swot:hasValue}  & \texttt{"This is an output"\textasciicircum \textasciicircum xsd:string} \\ \hline
+\texttt{ei:<uuid>/outputdata} & \texttt{rdf:type} & \texttt{swot:Data}\\ \hline
+\texttt{ei:<uuid>/outputdata} & \texttt{swot:hasDataSchema} & \texttt{swot:MyStringDataSchema}\\ \hline
+\end{tabular}
+\end{table*}
+
+In Table~\ref{tab:action_instance}, on the other hand, are shown the triples that concern the instance type  \texttt{swot:ActionInstance}. Action instances are inserted into the RDF store by any entity requiring the execution of an action. Among them, the authorship of the request is shown by the \texttt{swot:requestedBy} predicate, and the timestamp of the request.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{\texttt{swot:ActionInstance} triples to be inserted in the RDF store to trigger the action performace. Notice that the concept of data schema is explained in Section~\ref{ssec:dataschema_fieldschema}, while the triples needed for the definition of \texttt{swot:MyStringDataSchema} are available in the highlighted rows of Table~\ref{tab:basic_datatype}.}
+\label{tab:action_instance}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}, \texttt{ai}=\texttt{ns:MyAction/instance/}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyAction}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern, swot:Action}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasActionInstance}   & \texttt{ai:<uuid>} \\ \hline
+\texttt{ai:<uuid>} & \texttt{rdf:type} & \texttt{swot:ActionInstance}  \\ \hline
+\texttt{ai:<uuid>} & \texttt{swot:hasRequestTimeStamp} & \texttt{"2018-12-06T17:00:00Z"\textasciicircum \textasciicircum xsd:dateTimeStamp}  \\ \hline
+\texttt{ai:<uuid>}& \texttt{swot:requestedBy} & \texttt{ns:AnotherWebThing}   \\ \hline
+\texttt{ai:<uuid>}& \texttt{swot:hasInputData} & \texttt{ai:<uuid>/inputdata}   \\ \hline
+\texttt{ai:<uuid>/inputdata}& \texttt{rdf:type} & \texttt{swot:Data}   \\ \hline
+\texttt{ai:<uuid>/inputdata}& \texttt{swot:hasValue}  & \texttt{"This is the input"\textasciicircum \textasciicircum xsd:string} \\ \hline
+\texttt{ai:<uuid>/inputdata} & \texttt{wot:hasDataSchema} & \texttt{swot:MyStringDataSchema}\\ \hline
+\end{tabular}
+\end{table*}
+
+The two examples available have either an input given, either an Output. As already discussed, actions can have both, or none of them. Events, on their side, can have an output or just be empty. What is interesting, here, is the timings with which those pieces of information are inserted into the knowledge base.
+
+Let's consider first actions. A common definition for them, according to W3C WoT working group, is a kind of interaction taking a finite amount of time to reach an end. It is therefore reasonable to consider that the outputs of an action, if available, will be given \textit{after} that amount of time. So, while inputs need to be given immediately together with the action instance to trigger the execution, we definitely run into an asynchronous behavior whenever we expect an output as result of the execution.
+
+Events, instead, are by definition asynchronous. So, when they happen, they should carry all the information they need (i.e., their output if they have one). A different reasoning has to be done concerning properties: they are, in fact, the reference for information specific to the Semantic Web Thing and therefore they exist because of the information itself. So they have no input nor output, but they just supply their property data.
+
+The input or output resource, of course, needs to be filled out with actual information. Within the ontology inputs and outputs belong to the class \texttt{swot:Data} when given by user or retrieved from execution. In our vision, however, there is no sensible difference between \texttt{swot:Data} and the \ontoref{dul} class \texttt{dul:InformationObject} as the piece of information is here collected, citing DUL \texttt{rdfs:comment} of \texttt{dul:InformationObject}, \textit{independently of how it is concretely realized}.
+
+Eventually, as it can be seen, all \texttt{swot:Data} instances refer to a \texttt{swot:DataSchema}. This is necessary, as an InteractionPattern might accept as input different formats, or release its output in different formats: connecting the information with the actual interpretation statement is therefore essential. For a complete tractation of the \texttt{swot:DataSchema} concept, see Section \ref{ssec:dataschema_fieldschema}.
+
+\subsection{DataSchema and FieldSchema}
+\label{ssec:dataschema_fieldschema}
+As it was told in the previous Sections, \texttt{swot:Thing} is an abstraction for connected objects in a SWoT environment. Similarly to any object in the real world, the semantic Web~Thing instance needs several connections with the virtualized semantic enviroment. Those connections enable all the interactions that things may have in their own context. Hence, they are very important because they permit a dynamic flow of information from thing to thing, as well as from user to thing and \textit{vice versa}. Actions, then, will be able to receive information on how they are expected to perform their task: the \textit{parameters}. According to such information the performance may change dramatically: just consider the difference between asking a printer to make 2 or 200 copies of the same file! 
+
+Similar interfaces, moreover, are needed when actions or events have to produce some kind of output. And eventually, as we already said, also properties may need one, as they store status information.
+
+Formatting parameters is not a negligible problem. Furthermore, when discovering the available Web Things in a SWTE, it may be of great interest to query for Actions that require an input formatted in a specific way (e.g., a thermostat where the target temperature is expressed in celsius degrees in an XML file), or for Events that generate outputs with a particular syntax (e.g., a temperature sensor with output expressed in Fahrenheit degrees in a JSON file).
+
+\begin{figure*}
+\vspace{10pt}
+\centering
+\includegraphics[width=\textwidth]{fig4.png}
+\vspace{10pt}
+\caption{\texttt{swot:DataSchema} and \texttt{swot:FieldSchema} ontology subgraph, together with an example of a simple \texttt{xsd:string} datas chema inclusion.}
+\label{fig:fig4}
+\end{figure*}
+
+Within the SWOT ontology this problem is addressed by the \texttt{swot:DataSchema} and the \texttt{swot:FieldSchema} classes. In Fig.~\ref{fig:fig4} are shown the relationships between these two classes and the ones introduced in the previous sections, as well as a simple example. 
+
+To better understand the meaning and the usage of data schemas and field schemas, it is useful to distinguish the basic situations that can occur within a semantic Web Thing data interaction. All the following cases can happen either in inputs and outputs of any of the \texttt{swot:InteractionPattern} subtypes, i.e. actions, events and properties.
+
+\begin{enumerate}
+    \item The data exchanged (or stored, in the case of a property) is a basic data type, that fulfils the definition of any of the types in XML Schema\footnote{\faLink~\url{https://www.w3.org/TR/xmlschema-2/}}, like \texttt{xsd:integer}, \texttt{xsd:string};
+    \item The data exchanged is a complex data type collecting in various ways a cluster of basic data types: this might be (but not limited to) the case of a JSON or an XML file; 
+    \item The data exchanged is a resource: a text file, audio, video, and so on;
+    \item The data exchanged is a Semantic graph formatted according to a specific ontology.
+\end{enumerate}
+The following Subsections will demonstrate their usage giving practical examples.
+
+\subsubsection{\textsf{Basic and Complex datatype}}
+In this Section the complex and basic datatypes are examined. Tables~\ref{tab:basic_datatype}~and~\ref{tab:complex_datatype} are provided to exemplify the meaning and the usage of \texttt{swot:DataSchema} and \texttt{swot:Field\-Schema} classes.
+
+In particular, Table~\ref{tab:basic_datatype} (first example) reports the triples needed by an action requiring as input information a unique \texttt{xsd:integer}, and outputting the square root of that number as \texttt{xsd:double}.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Examples of basic datatypes. White lines refer to the first example. Grey lines have to be added to realize the second example discussed in Section~\ref{ssec:dataschema_fieldschema} (Basic and Complex datatype).}
+\label{tab:basic_datatype}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyAction}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern,}  \\ 
+      &          & \texttt{swot:Action}  \\\hline
+\texttt{ns:MyAction}       & \texttt{swot:hasDataSchema}   & \texttt{ns:MyIntDataSchema,} \\ 
+  &   & \texttt{ns:MyDoubleDataSchema} \\\hline
+\texttt{ns:MyAction}       & \texttt{swot:hasInputDataSchema} & \texttt{ns:MyIntDataSchema}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasOutputDataSchema} & \texttt{ns:MyDoubleDataSchema}  \\ \hline
+\texttt{ns:MyIntDataSchema}& \texttt{rdf:type}            & \texttt{swot:DataSchema}   \\ \hline
+\texttt{ns:MyDoubleDataSchema} & \texttt{rdf:type}        & \texttt{swot:DataSchema}   \\ \hline
+\texttt{ns:MyIntDataSchema}& \texttt{swot:hasFieldSchema}  & \texttt{\_:MyIntFieldSchemaBN} \\ \hline
+\texttt{\_:MyIntFieldSchemaBN} & \texttt{rdf:type}        & \texttt{swot:FieldSchema, xsd:integer}\\ \hline
+\texttt{ns:MyDoubleDataSchema} & \texttt{swot:hasFieldSchema}  & \texttt{\_:MyDoubleFieldSchemaBN} \\ \hline
+\texttt{\_:MyDoubleFieldSchemaBN} & \texttt{rdf:type}     & \texttt{swot:FieldSchema, xsd:double}\\ \hline
+\rowcolor{lightgray}
+\texttt{ns:MyAction}       & \texttt{swot:hasDataSchema}   & \texttt{ns:MyStringDataSchema}   \\ \hline
+\rowcolor{lightgray}
+\texttt{ns:MyAction}       & \texttt{swot:hasInputDataSchema} & \texttt{ns:MyStringDataSchema} \\ \hline
+\rowcolor{lightgray}
+\texttt{ns:MyStringDataSchema} & \texttt{rdf:type}      & \texttt{swot:DataSchema}     \\ \hline
+\rowcolor{lightgray}
+\texttt{ns:MyStringDataSchema} & \texttt{swot:hasFieldSchema} & \texttt{\_:MyStringFieldSchemaBN} \\ \hline
+\rowcolor{lightgray}
+\texttt{\_:MyStringFieldSchemaBN} & \texttt{rdf:type}   & \texttt{swot:FieldSchema, xsd:string} \\ \hline
+\end{tabular}
+\end{table*}
+
+In a smarter Web Thing, the same action might be able to read also an \texttt{xsd:string}, and parse it independently towards the integer. In that case, there would be no difference with the previous situation except that, as in Table~\ref{tab:basic_datatype} (second example), the grey-coloured entries are included.
+
+In a smarter Web Thing, the same action might be able to read also an \texttt{xsd:string}, and parse it independently towards the integer. In that case, there would be no difference with the previous situation except that, as in Table~\ref{tab:basic_datatype} (second example), the grey-coloured entries are included.
+
+The complex datatype is slightly more challenging and is represented in Table~\ref{tab:complex_datatype}. The Table contains the triples necessary for an action that requires an \texttt{xsd:string} as input, $\alpha$, and outputs a JSON object having an entry for every distinct character of $\alpha$, and value the number of times such character appears in $\alpha$.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Complex datatype triple description example. Notice that \texttt{ns:MyStringDataSchema} definition is not included in the Table, as it is already available in Table~\ref{tab:basic_datatype}, grey-coloured lines.}
+\label{tab:complex_datatype}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyAction}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern,}  \\
+   &  & \texttt{swot:Action}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasDataSchema}   & \texttt{ns:MyStringDataSchema} \\
+      &    & \texttt{ns:MyComplexTypeDataSchema} \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasInputDataSchema} & \texttt{ns:MyStringDataSchema}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasOutputDataSchema} & \texttt{ns:MyComplexTypeDataSchema}  \\ \hline
+\texttt{ns:MyComplexTypeDataSchema}& \texttt{rdf:type}            & \texttt{swot:DataSchema}   \\ \hline
+\texttt{ns:MyComplexTypeDataSchema}& \texttt{swot:hasFieldSchema}  & \texttt{ns:MyJSONFieldSchema} \\ \hline
+\texttt{ns:MyJSONFieldSchema} & \texttt{rdf:type}        & \texttt{swot:FieldSchema, xsd:Literal}\\ \hline
+\end{tabular}
+\end{table*}
+
+The two examples provided come in help to explain the concepts of data schema and field schema. 
+
+First of all, it is important to observe that an instance of \texttt{swot:DataSchema} should not be considered thing-specific. Therefore we expect that numerous actions, events and properties (no matter the Web Thing they belong to) share the same data schema, like is done for \texttt{ns:MyStringDataSchema}. This is an essential point, to guarantee interoperability as well as to reduce the amount of data in the knowledge base. Besides, it has to be highlighted that any \texttt{swot:DataSchema} should neither be bound to a role of fixed and immutable input or output: action~\textit{A} may need data schema~\textit{D} as input, while event~\textit{E} as output. The data schema must be a Web resource to be easily identified. As a matter of fact, it should be reachable from the Web, and should reply to requests with a JSON-LD describing the data format.
+
+Secondly, having a closer look to the Tables, we can outline the usage of the entity \texttt{swot:FieldSchema}. As it can be seen, the field schema closely depends on the data schema. It is a semantic resource that acts similarly to a collection point for data formats. Field schemas can be provided in the SWTE as blank nodes and as resources, depending on the needs of the interaction pattern: in the basic data case, the  field schema is a blank node typed as an \texttt{xsd} resource. There should be no need for further format description and interpretation support, as \texttt{xsd} refers to a well-known standard. 
+
+Inversely, in the complex data case, the field schema is a full resource typed as a generic \texttt{xsd:Literal}. The field schema resource URI, now, should be a reachable resource on the Web (i.e., a blank node here is not acceptable), containing all the needed information to interpret the literal entity. That is, in the case of Table~\ref{tab:complex_datatype}, we intend the resource to answer to an \texttt{HTTP GET} with a JSON Schema according to Listing~\ref{listing:complex_datatype_jsonschema}.
+
+Multiple field schemas can be connected to a data schema, signifying that the interaction pattern is able to use (or expecting) data formatted in more than one way.
+
+Once this answer reaches the client, there is a global understanding of how the data should be formatted and/or interpreted. Notice that a DataSchema may point to more than one FieldSchema, meaning that all of them will be given (if it is an ouput), or all of them are required (if it is an input).\\
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[caption={JSON Schema expected in response to an \texttt{HTTP GET} to \texttt{ns:MyJSONFieldSchema} as in Table~\ref{tab:complex_datatype} referring to the complex datatype example in Section~\ref{ssec:dataschema_fieldschema}.}, label={listing:complex_datatype_jsonschema}]
+Request:
+GET MyJSONFieldSchema
+Host: ns
+
+Result:
+200 OK
+Content type: application/json+schema
+
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "ns:MyJSONFieldSchema",
+  "type": "object",
+  "title": "Char counter Action output",
+  "patternProperties": {
+    "^[a-z]$": {"type": "integer"}
+  },
+  "additionalProperties": false
+}
+\end{lstlisting}
+\end{minipage}
+
+\subsubsection{\textsf{Web Resource datatype}}
+
+It is not rare for a device to need a file to perform an action: especially (but not limited to that case) if the device is virtual. While a generic and maybe small textual file can be treated as in the previous Subsection as an \texttt{xsd:Literal}, a more complex situation is here considered of actions, events and properties dealing with generic resources located on the Web.
+
+The most important point, when the semantic Web Thing is parametrized with Web resources, is to define the semantic description in order to allow a correct usage of the given item. This task belongs to the data schema and the field schema. As a first example, let us consider Table~\ref{tab:resource_datatype}, containing the triples necessary for an action that is capable of playing an audio file by using a generic audio player (which will be referred to as \texttt{play}). In such case, the Web Thing's inner logic would be parameterized so that the parameter URI is interpreted as a link to music file. Once the resource URI is received, its usage is fully dependent on the device purpose. In general, we consider two possibilities: (i) the resource is downloaded and used (ii) the resource is not directly downloadable (i.e., a database access point, a streaming resource). Cocktail framework (see Section~ \ref{ssec:cocktail}) can implement such audio player in both ways, either if the logic is equivalent to
+\begin{lstlisting}[language=bash]
+$ download audioFile.mp3 from music_link
+$ play audioFile.mp3
+\end{lstlisting}
+or to
+\begin{lstlisting}[language=bash]
+$ play music_link
+\end{lstlisting} 
+
+A second example of this same kind might be a database access Action. In this case, we consider the Action to expect as input an \texttt{xsd:string} containing the SQL query, and a \texttt{swot:ResourceURI}, Web address of the database. Consider Table~\ref{tab:db_resource_datatype} for the triples. Given those inputs, the software logic would probably be something similar to the command
+\begin{lstlisting}
+Request:
+POST "SHOW DATABASES"
+Host: <my_DB_resource_URI>
+\end{lstlisting}
+
+Of course, there is no difference in the case of an output resource: an upload is to be expected towards the resource address, or the creation of the server itself, responding to queries on that resource. This may also be a powerful solution, to be combined with a REST architecture.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Web resource datatype triple description example.}
+\label{tab:resource_datatype}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyAction}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern, swot:Action}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasDataSchema}   & \texttt{ns:WebAudioDataSchema} \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasInputDataSchema} & \texttt{ns:WebAudioDataSchema}  \\ \hline
+\texttt{ns:WebAudioDataSchema}& \texttt{rdf:type}            & \texttt{swot:DataSchema}   \\ \hline
+\texttt{ns:WebAudioDataSchema}& \texttt{swot:hasFieldSchema}  & \texttt{\_:MyAudioResourceBN} \\ \hline
+\texttt{\_:MyAudioResourceBN} & \texttt{rdf:type}        & \texttt{swot:FieldSchema, swot:ResourceURI}\\ \hline
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Web resource datatype triple description for a database query \texttt{swot:Action} client. Notice that \texttt{ns:MyStringDataSchema} is not included, as it is already available in Table~\ref{tab:basic_datatype}.}
+\label{tab:db_resource_datatype}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyAction}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern, swot:Action}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasDataSchema}   & \texttt{ns:DBAccessDataSchema,} \\
+&  & \texttt{ns:MyStringDataSchema} \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasInputDataSchema} & \texttt{ns:DBAccessDataSchema,}  \\
+&  & \texttt{ns:MyStringDataSchema}  \\ \hline
+\texttt{ns:DBAccessDataSchema}& \texttt{rdf:type}            & \texttt{swot:DataSchema}   \\ \hline
+\texttt{ns:DBAccessDataSchema}& \texttt{swot:hasFieldSchema}  & \texttt{\_:MyDBResourceBN} \\ \hline
+\texttt{\_:MyDBResourceBN} & \texttt{rdf:type}        & \texttt{swot:FieldSchema, swot:ResourceURI}\\ \hline
+\end{tabular}
+\end{table*}
+
+\subsubsection{\textsf{Semantic Resource datatype}}
+
+Eventually, we refer to the possible occurrence of a \texttt{swot:InteractionPattern} designed to produce or to consume a semantic graph. It is important to say that there is not such a big difference with the previous case exposing an action querying a database. In fact, as it is shown in Table~\ref{tab:graph_resource_datatype}, the difference is that the field schema is now given by a complete resource instead of a blank node, and of course it is not a \texttt{swot:ResourceURI} but a specialized \texttt{swot:OntologyURI}. With this data/field schema construction, the user can download or explore the ontology given by the field schema, and use the patterns there described either to format a triple graph, if it is an input graph, or to query the triple graph, if it is an output. The grey lines in Table~\ref{tab:graph_resource_datatype} include the triples to be added in order to perform an action request.
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Graph resource datatype triple description.}
+\label{tab:graph_resource_datatype}
+\begin{tabular}{lll}
+%\multicolumn{3}{l}{Prefixes available in the Web Thing environment: \texttt{rdf}, \texttt{xsd}, \texttt{swot}, \texttt{ns}, \texttt{myns2}=\texttt{ns:MyAction/instance/}} \\ \hline
+\textbf{subject}           & \textbf{predicate}           & \textbf{object}           \\ \hline
+\texttt{ns:MyAction}       & \texttt{rdf:type}            & \texttt{swot:InteractionPattern,}  \\
+       &          & \texttt{swot:Action}  \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasDataSchema}   & \texttt{ns:GraphAccessDataSchema} \\ \hline
+\texttt{ns:MyAction}       & \texttt{swot:hasInputDataSchema} & \texttt{ns:GraphAccessDataSchema}  \\ \hline
+\texttt{ns:GraphAccessDataSchema} & \texttt{rdf:type}            & \texttt{swot:DataSchema}   \\ \hline
+\texttt{ns:GraphAccessDataSchema} & \texttt{swot:hasFieldSchema}  & \texttt{foaf:} \\ \hline
+\texttt{foaf:} & \texttt{rdf:type}        & \texttt{swot:FieldSchema,}\\ 
+&     & \texttt{swot:OntologyURI}\\ \hline
+
+\rowcolor{lightgray}
+\texttt{ns:MyAction}       & \texttt{swot:hasActionInstance}   & \texttt{ai:<uuid>}   \\ \hline
+\rowcolor{lightgray}
+\texttt{ai:<uuid>}       & \texttt{rdf:type} & \texttt{swot:ActionInstance} \\ \hline
+\rowcolor{lightgray}
+\texttt{ai:<uuid>} & \texttt{swot:hasRequestTimeStamp}      & \texttt{"2018-12-06T17:00:00Z"}     \\
+\rowcolor{lightgray}
+ &       & \texttt{\textasciicircum \textasciicircum xsd:dateTimeStamp}     \\ \hline
+\rowcolor{lightgray}
+\texttt{ai:<uuid>} & \texttt{swot:requestedBy} & \texttt{ns:AnotherWebThing2} \\ \hline
+\rowcolor{lightgray}
+\texttt{ai:<uuid>} & \texttt{swot:hasInputData}   & \texttt{ns:foafgraphResource} \\ \hline
+\rowcolor{lightgray}
+\texttt{ns:foafgraphResource} & \texttt{rdf:type}   & \texttt{swot:Data} \\ \hline
+\rowcolor{lightgray}
+\texttt{ns:foafgraphResource} & \texttt{swot:hasInputDataSchema}   & \texttt{ns:GraphAccessDataSchema} \\ \hline
+\end{tabular}
+\end{table*}
+
+It might be useful, in other scenarios, to join the usage of the \texttt{swot:ResourceURI} with the \texttt{swot:OntologyURI}, for more complex situations. For instance, let us consider the same input DataSchema of Table \ref{tab:graph_resource_datatype}, and an action whose task is to perform a SPARQL query like:
+
+\begin{lstlisting}
+SELECT ?v1 ... ?vN 
+WHERE { <some very complex query pattern> }
+\end{lstlisting}
+
+Let's consider, also in this case, that the FieldSchema is \texttt{foaf}. Then, the actual \texttt{swot:Data} parameter expected here is the Web location of a graph resource which we know is formatted according to \texttt{foaf}, so that the query will be able to be performed successfully. To make things more complex, let us add a line to the query:
+\begin{lstlisting}
+SELECT ?v1 ... ?vN 
+FROM <graph_resource>
+WHERE { <some very complex query pattern> }
+\end{lstlisting}
+If we include a \texttt{swot:ResourceURI} as second FieldSchema as we did for the case in Section~\ref{ssec:dataschema_fieldschema} (Web Resource datatype), it will be possible to give as a parameter also the \texttt{graph\_resource} variable.
+
+\begin{figure*}[h]
+\centering
+\vspace{10pt}
+\includegraphics[width=\textwidth]{swot_global.png}
+\vspace{10pt}
+\caption{Full view of the SWoT ontology. \texttt{swot:} prefix is omitted from the items shown.}
+\label{fig:full_ontology}
+\end{figure*}

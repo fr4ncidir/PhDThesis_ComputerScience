@@ -1,0 +1,97 @@
+\begin{figure*}[h!]
+\begin{center}
+\begin{tikzpicture}[->,>=stealth']
+
+\node[state,draw=mauve!90,fill=mauve,text=white,align=center] (SMARTGUITAR) {
+\begin{tabular}{l}
+  \parbox{2.6cm}{\texttt{ns:SmartGuitar}}
+   \end{tabular}
+};
+  
+ % State: ACK with different content
+ \node[state,  yshift=2.4cm, right of=SMARTGUITAR, node distance=3cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (SGTYPES) {%
+    \begin{tabular}{l} 
+        \parbox{4.8cm}{\texttt{iot:Thing, sosa:Platform, iot:SmartThing, iomust:MusicalThing, music:Instrument, iomust:SmartInstrument, iomust:SmartMusicalThing;}}
+    \end{tabular}
+};
+  
+   % State: ACK with different content
+\node[state, yshift=0cm, right of=SMARTGUITAR, node distance=6.5cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (IMUSENSOR) {%
+    \begin{tabular}{l}
+        \parbox{2.2cm}{\texttt{ns:IMUSensor}}
+    \end{tabular}
+};
+  
+\node[state, yshift=-1.5cm, right of=SMARTGUITAR, node distance=5cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (CONTACTMIC) {%
+    \begin{tabular}{l} 
+        \parbox{3.8cm}{\texttt{ns:ContactMicrophone}}
+    \end{tabular}
+};
+  
+\node[state, yshift=-3cm, right of=SMARTGUITAR, node distance=1cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (LOUDSPEAKER) {%
+    \begin{tabular}{l} 
+        \parbox{2.6cm}{\texttt{ns:Loudspeaker}}
+    \end{tabular}
+};
+  
+\node[state, yshift=0cm, right of=IMUSENSOR, node distance=4cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (SENSORS) {%
+    \begin{tabular}{l}
+        \parbox{2cm}{\texttt{sosa:Sensor}}
+    \end{tabular}
+};
+  
+\node[state, yshift=0cm, right of=LOUDSPEAKER, node distance=5cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (ACTUATORS) {%
+    \begin{tabular}{l}
+        \parbox{2.4cm}{\texttt{sosa:Actuator}}
+    \end{tabular}
+};
+  
+\node[state, yshift=0cm, right of=SGTYPES, node distance=5.5cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (IMUHOSTS) {%
+    \begin{tabular}{l} 
+        \parbox{3cm}{\texttt{ns:Acceleration, ns:Rotation, ns:Orientation}}
+    \end{tabular}
+};
+  
+\node[state, yshift=-1.3cm,  right of=IMUHOSTS, node distance=3.5cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (OBSERVABLEPROPERTY) {%
+    \begin{tabular}{l} 
+        \parbox{4.4cm}{\texttt{sosa:ObservableProperty}}
+    \end{tabular}
+};
+  
+\node[state, yshift=0cm, right of=CONTACTMIC, node distance=6.7cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (VIBRATION) {%
+    \begin{tabular}{l}
+        \parbox{2.2cm}{\texttt{ns:Vibration}}
+    \end{tabular}
+};
+  
+\node[state, yshift=-1cm,  right of=LOUDSPEAKER, node distance=4cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (SOUND)  {%
+    \begin{tabular}{l} 
+        \parbox{1.4cm}{\texttt{ns:Sound}}
+    \end{tabular}
+};
+  
+\node[state, yshift=0cm, right of=SOUND, node distance=5cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (ACTUATABLEPROPERTY) {%
+    \begin{tabular}{l}
+        \parbox{4.4cm}{\texttt{sosa:ActuatableProperty}}
+    \end{tabular}
+};
+ 
+\path (SMARTGUITAR)     edge[bend left=30,draw=blue]  node[anchor=north,above]{\textcolor{blue}{\texttt{a~~}}}   (SGTYPES)
+(SMARTGUITAR)   edge[anchor=south,draw=blue] node[]{\textcolor{blue}{\texttt{sosa:hosts}}}                      (IMUSENSOR)  
+(SMARTGUITAR)   edge[bend right=10,draw=blue] node[anchor=south, below]{\textcolor{blue}{\texttt{sosa:hosts}}}  (LOUDSPEAKER)  
+(SMARTGUITAR)   edge[bend right=20,draw=blue] node[anchor=south, above]{\textcolor{blue}{\texttt{sosa:hosts}}}  (CONTACTMIC)
+(IMUSENSOR)     edge[draw=blue] node[anchor=north]{\textcolor{blue}{\texttt{a}}}                                (SENSORS)
+(LOUDSPEAKER)   edge[draw=blue] node[anchor=north]{\textcolor{blue}{\texttt{a}}}                                (ACTUATORS)
+(CONTACTMIC)    edge[draw=blue] node[anchor=north]{\textcolor{blue}{\texttt{a}}}                                (SENSORS)
+(IMUSENSOR)     edge[draw=blue] node[]{\textcolor{blue}{\texttt{sosa:observes}}}       (IMUHOSTS)
+(IMUHOSTS)     	edge[bend left=30,draw=blue] node[anchor=north]{\textcolor{blue}{\texttt{a}}}                                (OBSERVABLEPROPERTY)
+(CONTACTMIC)    edge[draw=blue] node[anchor=north]{\textcolor{blue}{\texttt{sosa:observes}}}                    (VIBRATION)
+(VIBRATION)     edge[bend right=30, draw=blue] node[anchor=north]{\textcolor{blue}{\texttt{~~a}}}                                (OBSERVABLEPROPERTY)
+(LOUDSPEAKER)   edge[bend right=10, draw=blue] node[below]{\textcolor{blue}{\texttt{sosa:actsOnProperty~~~~~~~~~~~~}}}         (SOUND)
+(SOUND)     	edge[draw=blue] node[anchor=north, below]{\textcolor{blue}{\texttt{a}}}                                (ACTUATABLEPROPERTY);   
+
+\end{tikzpicture}
+\end{center}
+\caption{SOSA integration with the IoMusT Ontology. Extended prefixes are available in the \hyperref[sec:ontology_list]{List of Ontologies}. The color scheme is the same used in Prot\'eg\'e \cite{protege}.\\Legend:~~\textbf{\textcolor{yellow!90}{Classes}~~\textcolor{mauve!90}{Individuals}~~\textcolor{blue}{Object Properties}}.}
+\label{graph:sosa_example}
+\end{figure*}

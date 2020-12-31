@@ -1,0 +1,121 @@
+\begin{figure*}[!ht]
+\begin{center}
+\begin{tikzpicture}[->,>=stealth']
+
+\node[state,draw=mauve!90,fill=mauve!90,text=white,align=center] (BOB) {
+\begin{tabular}{l}
+  \parbox{1.1cm}{\texttt{ns:bob}}
+   \end{tabular}
+};
+  
+ % State: ACK with different content
+ \node[state,  yshift=2cm, right of=BOB, node distance=4cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (BOBTYPES) {%
+    \begin{tabular}{l} 
+        \parbox{3cm}{\texttt{foaf:Agent, foaf:Person, 
+                music:Performer, prov:Agent, prov:Person;}}
+    \end{tabular}
+};
+
+ % State: ACK with different content
+ \node[state,  yshift=2cm, node distance=0cm, anchor=center, draw=green!90,fill=green!90,align=center] (BOBNAME) {%
+    \begin{tabular}{l} 
+        \parbox{0.9cm}{\texttt{'Bob'}}
+    \end{tabular}
+};
+  
+   % State: ACK with different content
+\node[state, yshift=-2cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (CRISTINA) {%
+    \begin{tabular}{l}
+        \parbox{2.1cm}{\texttt{ns:cristina}}
+    \end{tabular}
+};
+  
+\node[state, right of=BOB, node distance=6.9cm, anchor=center, draw=mauve!90,fill=mauve!90,align=center,text=white] (APPLICATION) {%
+    \begin{tabular}{l} 
+        \parbox{3.8cm}{\texttt{ns:IomustApplication}}
+    \end{tabular}
+};
+
+ \node[state, right of=BOBTYPES, node distance=6cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (APPLICATIONTYPES) {%
+    \begin{tabular}{l} 
+        \parbox{6cm}{\texttt{iot:Application, prov:Activity,
+        iomust:MusicalThingApplication;}}
+    \end{tabular}
+};
+
+\node[state, yshift=-1cm ,draw=mauve!90,right of=APPLICATION, node distance=5cm, fill=mauve!90,text=white,align=center] (SMARTGUITAR) {
+\begin{tabular}{l}
+  \parbox{2.6cm}{\texttt{ns:SmartGuitar}}
+   \end{tabular}
+};
+
+\node[state,yshift=-1cm, 
+%draw=purple!90,
+right of=CRISTINA, node distance=6.5cm, 
+%fill=purple!90,
+%text=white,
+align=center] (EVENT) {
+\begin{tabular}{l}
+  \parbox{1.2cm}{\texttt{\_:event}}
+   \end{tabular}
+};
+
+ \node[state,  yshift=-1.5cm, right of=CRISTINA, node distance=12cm, anchor=center, draw=yellow!90,fill=yellow!90,align=center] (EVENTTYPES) {%
+    \begin{tabular}{l} 
+        \parbox{3.4cm}{\texttt{event:Event, prov:Entity, music:Performance;}}
+    \end{tabular}
+};
+
+\node[state,yshift=-3cm, 
+%draw=purple!90,
+right of=CRISTINA, node distance=6.5cm,
+%fill=purple!90,
+%text=white,
+align=center] (EVENTTIME) {
+\begin{tabular}{l}
+  \parbox{2cm}{\texttt{\_:eventtime}}
+   \end{tabular}
+};
+
+\node[state,yshift=0cm, 
+draw=yellow!90,fill=yellow!90,align=center,
+right of=EVENTTIME, node distance=5cm,
+align=center] (EVENTTIMETYPE) {
+\begin{tabular}{l}
+  \parbox{3.2cm}{\texttt{timeline:Interval}}
+   \end{tabular}
+};
+
+ \node[state,  yshift=-3cm, right of=BOB, node distance=1cm, anchor=center, draw=green!90,fill=green!90,align=center] (STARTTIME) {%
+    \begin{tabular}{l} 
+        \parbox{4.1cm}{\texttt{'2019-06-18T12:00:00Z'}}
+    \end{tabular}
+};
+
+ \node[state,  yshift=-5cm, node distance=0cm, anchor=center, draw=green!90,fill=green!90,align=center] (DURATION) {%
+    \begin{tabular}{l} 
+        \parbox{1cm}{\texttt{'PT1H'}}
+    \end{tabular}
+};
+ 
+\path (BOB)     edge[draw=blue]  node[anchor=south,above]{\textcolor{blue}{\texttt{a}}}   (BOBTYPES)
+(BOB)     edge[draw=green]  node[anchor=south,above]{\textcolor{green}{\texttt{foaf:name}}}   (BOBNAME)
+(BOB)   edge[draw=blue] node[]{\textcolor{blue}{\texttt{foaf:knows}}}                      (CRISTINA)  
+(BOB)   edge[draw=blue] node[anchor=south, above]{\textcolor{blue}{\texttt{iot:isInvolvedIn}}}  (APPLICATION)  
+(APPLICATION)   edge[draw=blue] node[anchor=south, above]{\textcolor{blue}{\texttt{a}}}  (APPLICATIONTYPES)
+(SMARTGUITAR)     edge[bend right=10, draw=blue] node[anchor=west]{\textcolor{blue}{\texttt{iot:isInvolvedIn}}} (APPLICATION)
+(APPLICATION)   edge[draw=blue] node[text width=2cm]{\textcolor{blue}{\texttt{iot:produces,\\ prov:generated}}}                                (EVENT)
+(EVENT)   edge[draw=blue] node[anchor=south west, text width=2cm]{\textcolor{blue}{\texttt{a}}}                                (EVENTTYPES)
+(EVENT)   edge[draw=blue] node[text width=2cm]{\textcolor{blue}{\texttt{event:agent}}}                                (BOB)
+(EVENT)   edge[bend right=10, draw=blue] node[text width=2cm]{\textcolor{blue}{\texttt{event:factor}}}                                (SMARTGUITAR)
+(EVENT)   edge[draw=blue] node[anchor=south,text width=2cm]{\textcolor{blue}{\texttt{event:time}}}                                (EVENTTIME)
+(EVENTTIME)   edge[draw=blue] node[anchor=south]{\textcolor{blue}{\texttt{a}}}                                (EVENTTIMETYPE)
+(EVENTTIME)   edge[bend left=20,draw=green] node[anchor=south,text width=2cm]{\textcolor{green}{\texttt{timeline:start}}}                                (STARTTIME)
+(EVENTTIME)   edge[draw=green] node[anchor=north]{\textcolor{green}{\texttt{timeline:duration}}}                                (DURATION)
+;   
+
+\end{tikzpicture}
+\end{center}
+\caption{Activities in the IoMusT Ontology. Undefined resources can be found in previous Figures and Listings. The color scheme is the same used in Prot\'eg\'e \cite{protege}.\\Legend: \textbf{ \textcolor{yellow!90}{Classes}~~\textcolor{mauve!90}{Individuals}~~\textcolor{blue}{Object Properties}~~\textcolor{green!90}{Literals, Data Properties}~~\framebox{Blank Nodes}}.}
+\label{graph:activities}
+\end{figure*}
