@@ -34,3 +34,6 @@ or
   school={Alma Mater Studiorum Università di Bologna}
 }
 ```
+
+## Any question for me?
+**Please feel free to open a discussion or an issue on this repository, if you have any question about this huge work.**
