@@ -10,7 +10,7 @@ from London (UK), (51.480344, -0.008477)
 
 Thesis released on 18th January 2020 at 13:33 GMT+1
 
-from Saint-Etienne (France), (45.445083, 4.3973356)
+from Saint-Etienne (aka Le-Pire-Endroit-De-France) (France), (45.445083, 4.3973356)
 
 
 
